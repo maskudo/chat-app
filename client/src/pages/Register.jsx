@@ -1,7 +1,9 @@
+import axios from 'axios';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import registerRoute from '../utils/APIRoutes';
 
 function isAlphaNumeric(str) {
   let code;
@@ -31,6 +33,7 @@ export default function Register() {
 
   const handleValidation = () => {
     const { password, confirmPassword, username } = values;
+    let isSuccess = true;
     const toastOptions = {
       position: 'bottom-right',
       autoClose: 8000,
@@ -43,33 +46,50 @@ export default function Register() {
         'Username should be longer than 3 characters in length',
         toastOptions
       );
-      return false;
+      isSuccess = false;
     }
     if (!isAlphaNumeric(username)) {
       toast.error(
         'Username can only contain alphanumeric characters',
         toastOptions
       );
-      return false;
+      isSuccess = false;
     }
     if (password !== confirmPassword) {
       toast.error('Passwords do not match.', toastOptions);
-      return false;
+      isSuccess = false;
     }
     if (password.length < 7) {
       toast.error(
         'Password should be longer than 7 characters in length',
         toastOptions
       );
-      return false;
+      isSuccess = false;
     }
 
-    return true;
+    return isSuccess;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    handleValidation();
+    if (handleValidation()) {
+      const { password, username, email } = values;
+      console.log(username, email, password, registerRoute);
+      const { data } = await axios.post(
+        registerRoute,
+        {
+          username,
+          email,
+          password,
+        },
+        {
+          headers: {
+            'content-type': 'application/json',
+          },
+        }
+      );
+      console.log('data is ', data);
+    }
   };
 
   const handleChange = (e) => {
@@ -92,7 +112,24 @@ export default function Register() {
             type='text'
             name='username'
             placeholder='username'
+            required
             id='username'
+            onChange={(e) => handleChange(e)}
+          />
+        </label>
+
+        <label
+          htmlFor='email'
+          className='block text-gray-700 text-sm font-bold mb-2'
+        >
+          Enter Email
+          <input
+            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+            type='email'
+            name='email'
+            placeholder='email'
+            required
+            id='email'
             onChange={(e) => handleChange(e)}
           />
         </label>
@@ -107,6 +144,7 @@ export default function Register() {
             type='password'
             name='password'
             id='password'
+            required
             placeholder='password'
             onChange={(e) => handleChange(e)}
           />
@@ -122,6 +160,7 @@ export default function Register() {
             type='password'
             placeholder='confirmPassword'
             name='confirmPassword'
+            required
             id='confirmPassword'
             onChange={(e) => handleChange(e)}
           />

@@ -21,8 +21,10 @@ module.exports.register = async (req, res, next) => {
       username,
       password: hashedPwd,
     });
-    delete user.password;
-    return res.json({ status: true, user });
+    //mongodb returns a read only copy in user so convert it to js object
+    const userObject = user.toObject()
+    delete userObject.password;
+    return res.json({ status: true, userObject });
   } catch (error) {
     next(error);
   }
@@ -45,8 +47,9 @@ module.exports.login = async (req, res, next) => {
         status: false,
       });
     }
-    delete user.password;
-    return res.json({ status: true, user });
+    const userObject = user.toObject()
+    delete userObject.password;
+    return res.json({ status: true, user: userObject });
   } catch (error) {
     next(error);
   }

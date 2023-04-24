@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import registerRoute from '../utils/APIRoutes';
+import { registerRoute } from '../utils/APIRoutes';
 
 function isAlphaNumeric(str) {
   let code;
@@ -75,7 +75,6 @@ export default function Register() {
     e.preventDefault();
     if (handleValidation()) {
       const { password, username, email } = values;
-      console.log(username, email, password, registerRoute);
       const { data } = await axios.post(
         registerRoute,
         {
@@ -95,7 +94,6 @@ export default function Register() {
         localStorage.setItem('chat-app-user', JSON.stringify(data.user));
         navigate("/");
       }
-      console.log("data is ", data);
     }
   }
 

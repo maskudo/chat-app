@@ -1,5 +1,29 @@
-module.exports.register = (req, res, next) => {
-  console.log('hello from controller');
-  console.log(req.body);
-  next();
+const User = require('../models/userModel');
+const bcrypt = require('bcrypt');
+
+module.exports.register = async (req, res, next) => {
+  try {
+    const { username, email, password } = req.body;
+    const usernameCheck = await User.findOne({ username });
+    if (usernameCheck) {
+      return res.json({
+        msg: 'Username already taken',
+        status: false,
+      });
+    }
+    const emailCheck = await User.findOne({ email });
+    if (emailCheck) {
+      return res.json({ msg: 'Email already taken', status: false });
+    }
+    const hashedPwd = await bcrypt.hash(password, 10);
+    const user = await User.create({
+      email,
+      username,
+      password: hashedPwd,
+    });
+    delete user.password;
+    return res.json({ status: true, user });
+  } catch (error) {
+    next(error);
+  }
 };

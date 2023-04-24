@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import registerRoute from '../utils/APIRoutes';
@@ -30,17 +30,18 @@ export default function Register() {
     password: '',
     confirmPassword: '',
   });
+  const navigate = useNavigate()
+  const toastOptions = {
+    position: 'bottom-right',
+    autoClose: 8000,
+    pauseOnHover: true,
+    draggable: true,
+    theme: 'light',
+  };
 
   const handleValidation = () => {
     const { password, confirmPassword, username } = values;
     let isSuccess = true;
-    const toastOptions = {
-      position: 'bottom-right',
-      autoClose: 8000,
-      pauseOnHover: true,
-      draggable: true,
-      theme: 'light',
-    };
     if (username.length < 3) {
       toast.error(
         'Username should be longer than 3 characters in length',
@@ -88,9 +89,16 @@ export default function Register() {
           },
         }
       );
-      console.log('data is ', data);
+      if (data.status === false) {
+        toast.error(data.msg, toastOptions);
+      } else {
+        localStorage.setItem('chat-app-user', JSON.stringify(data.user));
+        navigate("/");
+      }
+      console.log("data is ", data);
     }
-  };
+  }
+
 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });

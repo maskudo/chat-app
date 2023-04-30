@@ -1,4 +1,5 @@
 const host = 'http://localhost:5000';
-const registerRoute = `${host}/api/auth/register`;
-const loginRoute = `${host}/api/auth/login`;
-export { loginRoute, registerRoute };
+export const registerRoute = `${host}/api/auth/register`;
+export const loginRoute = `${host}/api/auth/login`;
+export const setAvatarRoute = `${host}/api/auth/setAvatarRoute`;
+export const allUsersRoute = `${host}/api/auth/allusers`;

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -8,25 +8,16 @@ const userSchema = new mongoose.Schema({
     max: 20,
     unique: true,
   },
-  email: {
-    type: String,
-    required: true,
-    max: 50,
-    unique: true,
-  },
   password: {
     type: String,
     required: true,
     min: 8,
   },
-  isAvatarImageSet: {
-    type: Boolean,
-    default: false,
-  },
   avatarImage: {
     type: String,
-    default: '',
+    default:
+      "https://www.dlf.pt/dfpng/maxpng/276-2761324_default-avatar-png.png",
   },
 });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model("User", userSchema);

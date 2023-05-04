@@ -5,7 +5,7 @@ import { allUsersRoute } from '../utils/APIRoutes';
 import Contact from '../components/Contact';
 
 export default function Chat() {
-  const [contacts, setContacts] = useState([]);
+  const [contacts, setContacts] = useState(undefined);
   const [currentUser, setCurrentUser] = useState(undefined);
   const navigate = useNavigate();
 
@@ -24,14 +24,12 @@ export default function Chat() {
   useEffect(() => {
     async function fn() {
       if (currentUser) {
-        // if (currentUser.isAvatarImageSet) {
-        //   const data = axios.get(`${allUsersRoute}/${currentUser.id}`);
-        //   setContacts(data.data);
-        // } else {
-        //   navigate('/setAvatar');
-        // }
-        // while setAvatar component not complete
-        const data = axios.get(`${allUsersRoute}/${currentUser.id}`);
+        let data;
+        try {
+          data = await axios.get(`${allUsersRoute}/${currentUser}`);
+        } catch (error) {
+          console.log(error);
+        }
         setContacts(data.data);
       }
     }
@@ -41,7 +39,10 @@ export default function Chat() {
     <div className="border-black bg-slate-800 w-screen h-screen text-white flex justify-center items-center">
       <div className="chat-container w-9/12 h-5/6 bg-slate-500 flex">
         <div className="contacts basis-2/6 border border-gray-600">
-          <Contact />
+          {contacts &&
+            contacts.map((contact, index) => (
+              <Contact key={`contact-${index}`} contact={contact} />
+            ))}
         </div>
         <div className="messages basis-4/6 border border-gray-600">
           Messages lol

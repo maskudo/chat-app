@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 
 module.exports.register = async (req, res, next) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, password } = req.body;
     const usernameCheck = await User.findOne({ username });
     if (usernameCheck) {
       return res.json({
@@ -11,20 +11,15 @@ module.exports.register = async (req, res, next) => {
         status: false,
       });
     }
-    const emailCheck = await User.findOne({ email });
-    if (emailCheck) {
-      return res.json({ msg: "Email already taken", status: false });
-    }
     const hashedPwd = await bcrypt.hash(password, 10);
     const user = await User.create({
-      email,
       username,
       password: hashedPwd,
     });
     //mongodb returns a read only copy in user so convert it to js object
     const userObject = user.toObject();
     delete userObject.password;
-    return res.json({ status: true, userObject });
+    return res.json({ status: true, user: userObject });
   } catch (error) {
     next(error);
   }
@@ -57,8 +52,7 @@ module.exports.login = async (req, res, next) => {
 
 module.exports.getAllUsers = async (req, res, next) => {
   try {
-    const users = await Users.find({ _id: { $ne: req.params.id } }).select([
-      "email",
+    const users = await User.find({ _id: { $ne: req.params.id } }).select([
       "username",
       "avatarImage",
       "_id",

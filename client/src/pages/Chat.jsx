@@ -11,10 +11,11 @@ export default function Chat() {
 
   useEffect(() => {
     async function fn() {
-      if (!localStorage.getItem('chat-app-user')) {
+      const user = await JSON.parse(localStorage.getItem('chat-app-user'));
+      if (!user) {
         navigate('/login');
       } else {
-        setCurrentUser(await JSON.parse(localStorage.getItem('chat-app-user')));
+        setCurrentUser(user);
       }
     }
     fn();

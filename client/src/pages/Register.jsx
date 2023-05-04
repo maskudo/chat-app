@@ -74,12 +74,11 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (handleValidation()) {
-      const { password, username, email } = values;
+      const { password, username } = values;
       const { data } = await axios.post(
         registerRoute,
         {
           username,
-          email,
           password,
         },
         {
@@ -91,7 +90,10 @@ export default function Register() {
       if (data.status === false) {
         toast.error(data.msg, toastOptions);
       } else {
-        localStorage.setItem('chat-app-user', JSON.stringify(data.user));
+        localStorage.setItem(
+          'chat-app-user',
+          JSON.stringify(data.user.username)
+        );
         navigate('/');
       }
     }
@@ -119,22 +121,6 @@ export default function Register() {
             placeholder="username"
             required
             id="username"
-            onChange={(e) => handleChange(e)}
-          />
-        </label>
-
-        <label
-          htmlFor="email"
-          className="block text-gray-700 text-sm font-bold mb-2"
-        >
-          Enter Email
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            type="email"
-            name="email"
-            placeholder="email"
-            required
-            id="email"
             onChange={(e) => handleChange(e)}
           />
         </label>

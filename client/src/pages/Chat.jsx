@@ -40,15 +40,15 @@ export default function Chat() {
 
   useEffect(() => {
     async function fn() {
-      const data = [];
+      let data = [];
       try {
         const route = `${allMessagesRoute}/${currentUser}/${selectedContact}`;
-        console.log(route);
-        // data = await axios.get(route);
+        data = await axios.get(route);
+        console.log(data.data);
       } catch (error) {
         console.log(error);
       }
-      setMessages(data.messages);
+      setMessages(data.data);
     }
     fn();
   }, [selectedContact]);
@@ -73,7 +73,7 @@ export default function Chat() {
             ))}
         </div>
         <div className="messages basis-4/6 border border-gray-600">
-          Messages lol
+          {messages && messages.map((message) => <h3>{message}</h3>)}
         </div>
       </div>
     </div>

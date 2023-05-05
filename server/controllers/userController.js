@@ -52,7 +52,7 @@ module.exports.login = async (req, res, next) => {
 
 module.exports.getAllUsers = async (req, res, next) => {
   try {
-    const users = await User.find({ username: { $ne: req.params.id } }).select([
+    const users = await User.find({ _id: { $ne: req.params.id } }).select([
       "username",
       "avatarImage",
       "_id",

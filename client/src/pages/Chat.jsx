@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { allUsersRoute } from '../utils/APIRoutes';
+import { allUsersRoute, allMessagesRoute } from '../utils/APIRoutes';
 import Contact from '../components/Contact';
 
 export default function Chat() {
   const [contacts, setContacts] = useState(undefined);
   const [currentUser, setCurrentUser] = useState(undefined);
+  const [selectedContact, setSelectedContact] = useState(undefined);
+  const [messages, setMessages] = useState(undefined);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,7 +17,7 @@ export default function Chat() {
       if (!user) {
         navigate('/login');
       } else {
-        setCurrentUser(user);
+        setCurrentUser(user._id);
       }
     }
     fn();
@@ -24,7 +26,7 @@ export default function Chat() {
   useEffect(() => {
     async function fn() {
       if (currentUser) {
-        let data;
+        let data = [];
         try {
           data = await axios.get(`${allUsersRoute}/${currentUser}`);
         } catch (error) {
@@ -35,13 +37,39 @@ export default function Chat() {
     }
     fn();
   }, [currentUser]);
+
+  useEffect(() => {
+    async function fn() {
+      const data = [];
+      try {
+        const route = `${allMessagesRoute}/${currentUser}/${selectedContact}`;
+        console.log(route);
+        // data = await axios.get(route);
+      } catch (error) {
+        console.log(error);
+      }
+      setMessages(data.messages);
+    }
+    fn();
+  }, [selectedContact]);
+
+  function handleContactClick(contact) {
+    setSelectedContact(contact);
+  }
   return (
     <div className="border-black bg-slate-800 w-screen h-screen text-white flex justify-center items-center">
       <div className="chat-container w-9/12 h-5/6 bg-slate-500 flex">
-        <div className="contacts basis-2/6 border border-gray-600">
+        <div className="contacts basis-2/6 border border-gray-600 overflow-auto">
           {contacts &&
-            contacts.map((contact, index) => (
-              <Contact key={`contact-${index}`} contact={contact} />
+            contacts.map((contact) => (
+              <Contact
+                key={contact.username}
+                contact={contact}
+                selected={selectedContact === contact._id}
+                onClick={() => {
+                  handleContactClick(contact._id);
+                }}
+              />
             ))}
         </div>
         <div className="messages basis-4/6 border border-gray-600">

@@ -25,7 +25,9 @@ module.exports.getMessageBySenderReceiver = async (req, res, next) => {
         { sender, receiver },
         { sender: receiver, receiver: sender },
       ],
-    });
+    })
+      .populate("sender")
+      .populate("receiver");
     return res.json(messages);
   } catch (error) {
     next(error);

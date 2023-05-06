@@ -1,4 +1,5 @@
 import { useRef, useEffect } from 'react';
+import Message from './Message';
 
 export default function ChatInterface({ messages, sendMessage }) {
   const messageContainerRef = useRef(null);
@@ -19,22 +20,22 @@ export default function ChatInterface({ messages, sendMessage }) {
   };
 
   return (
-    <div className="chat-container" ref={messageContainerRef}>
-      <div className="message-container">
+    <div className="chat-container flex flex-col justify-between h-full">
+      <div
+        className="message-container overflow-auto"
+        ref={messageContainerRef}
+      >
         {messages &&
           messages.map((message) => (
-            <div key={message._id} className="message">
-              <div className="message-text">{message.text}</div>
-              <div className="message-date">{message.createdAt}</div>
-            </div>
+            <Message key={message._id} message={message} />
           ))}
       </div>
-      <div className="input-container">
+      <div className="input-container w-full">
         <input
           type="text"
           placeholder="Type your message..."
           ref={inputRef}
-          className="text-black"
+          className="text-black w-full"
         />
         <button onClick={handleSendMessage} type="button">
           Send

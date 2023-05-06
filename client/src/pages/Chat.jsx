@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { allUsersRoute, allMessagesRoute } from '../utils/APIRoutes';
@@ -48,24 +48,26 @@ export default function Chat() {
     fn();
   }, [selectedContact]);
 
-  async function sendMessage(text) {
-    try {
-      const message = {
-        text,
-        sender: currentUser,
-        receiver: selectedContact,
-      };
-      const response = await axios.post(`${allMessagesRoute}`, message, {
-        headers: {
-          'content-type': 'application/json',
-        },
-      });
-      console.log(response.data.data);
-      setMessages([...messages, response.data.data]);
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  const sendMessage = useCallback(
+    async (text) => {
+      try {
+        const message = {
+          text,
+          sender: currentUser,
+          receiver: selectedContact,
+        };
+        const response = await axios.post(`${allMessagesRoute}`, message, {
+          headers: {
+            'content-type': 'application/json',
+          },
+        });
+        setMessages([...messages, response.data.data]);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [messages, setMessages, currentUser, selectedContact]
+  );
 
   function handleContactClick(contact) {
     setSelectedContact(contact);
@@ -86,8 +88,7 @@ export default function Chat() {
               />
             ))}
         </div>
-        <div className="chat-main basis-4/6 border border-gray-600">
-          {/* {messages && messages.map((message) => <h3>{message}</h3>)} */}
+        <div className="chat-main basis-4/6 border border-gray-600 overflow-auto">
           <ChatInterface messages={messages} sendMessage={sendMessage} />
         </div>
       </div>

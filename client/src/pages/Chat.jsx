@@ -3,12 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { allUsersRoute, allMessagesRoute } from '../utils/APIRoutes';
 import Contact from '../components/Contact';
+import ChatInterface from '../components/ChatInterface';
+
+// TODO: replace console logs with toasts
 
 export default function Chat() {
   const [contacts, setContacts] = useState(undefined);
+  const [messages, setMessages] = useState(undefined);
   const [currentUser, setCurrentUser] = useState(undefined);
   const [selectedContact, setSelectedContact] = useState(undefined);
-  const [messages, setMessages] = useState(undefined);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,17 +22,9 @@ export default function Chat() {
         navigate('/login');
       } else {
         setCurrentUser(user._id);
-      }
-    }
-    fn();
-  }, []);
-
-  useEffect(() => {
-    async function fn() {
-      if (currentUser) {
         let data = [];
         try {
-          data = await axios.get(`${allUsersRoute}/${currentUser}`);
+          data = await axios.get(`${allUsersRoute}/${user._id}`);
         } catch (error) {
           console.log(error);
         }
@@ -36,7 +32,7 @@ export default function Chat() {
       }
     }
     fn();
-  }, [currentUser]);
+  }, []);
 
   useEffect(() => {
     async function fn() {
@@ -44,7 +40,6 @@ export default function Chat() {
       try {
         const route = `${allMessagesRoute}/${currentUser}/${selectedContact}`;
         data = await axios.get(route);
-        console.log(data.data);
       } catch (error) {
         console.log(error);
       }
@@ -52,6 +47,25 @@ export default function Chat() {
     }
     fn();
   }, [selectedContact]);
+
+  async function sendMessage(text) {
+    try {
+      const message = {
+        text,
+        sender: currentUser,
+        receiver: selectedContact,
+      };
+      const response = await axios.post(`${allMessagesRoute}`, message, {
+        headers: {
+          'content-type': 'application/json',
+        },
+      });
+      console.log(response.data.data);
+      setMessages([...messages, response.data.data]);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   function handleContactClick(contact) {
     setSelectedContact(contact);
@@ -72,8 +86,9 @@ export default function Chat() {
               />
             ))}
         </div>
-        <div className="messages basis-4/6 border border-gray-600">
-          {messages && messages.map((message) => <h3>{message}</h3>)}
+        <div className="chat-main basis-4/6 border border-gray-600">
+          {/* {messages && messages.map((message) => <h3>{message}</h3>)} */}
+          <ChatInterface messages={messages} sendMessage={sendMessage} />
         </div>
       </div>
     </div>

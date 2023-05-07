@@ -1,5 +1,4 @@
 const Message = require("../models/messageModel");
-const bcrypt = require("bcrypt");
 
 module.exports.createMessage = async (req, res, next) => {
   try {
@@ -10,7 +9,10 @@ module.exports.createMessage = async (req, res, next) => {
       sender,
       receiver,
     });
-    return res.json({ status: true, data: message });
+    const popMessage = await Message.findOne({ _id: message._id })
+      .populate("sender")
+      .populate("receiver");
+    return res.json({ status: true, data: popMessage });
   } catch (error) {
     next(error);
   }

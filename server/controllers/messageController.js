@@ -2,7 +2,6 @@ const Message = require("../models/messageModel");
 
 module.exports.createMessage = async (req, res, next) => {
   try {
-    console.log(req.body);
     const { text, sender, receiver } = req.body;
     const message = await Message.create({
       text,
@@ -21,7 +20,6 @@ module.exports.getAllMessages = async (req, res, next) => {};
 module.exports.getMessageBySenderReceiver = async (req, res, next) => {
   try {
     const { sender, receiver } = req.params;
-    console.log(sender, receiver);
     const messages = await Message.find({
       $or: [
         { sender, receiver },

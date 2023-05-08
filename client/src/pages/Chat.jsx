@@ -1,12 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
 import { allUsersRoute, allMessagesRoute } from '../utils/APIRoutes';
 import Contact from '../components/Contact';
 import ChatInterface from '../components/ChatInterface';
 
-// TODO: replace console logs with toasts
-
+const toastOptions = {
+  position: 'bottom-right',
+  autoClose: 8000,
+  pauseOnHover: true,
+  draggable: true,
+  theme: 'light',
+};
 export default function Chat() {
   const [contacts, setContacts] = useState(undefined);
   const [messages, setMessages] = useState(undefined);
@@ -26,7 +32,11 @@ export default function Chat() {
         try {
           data = await axios.get(`${allUsersRoute}/${user._id}`);
         } catch (error) {
-          console.log(error);
+          const errorMsg = 'Error fetching contacts';
+          toast.error(errorMsg, {
+            ...toastOptions,
+            toastId: errorMsg,
+          });
         }
         setContacts(data.data);
       }
@@ -41,11 +51,17 @@ export default function Chat() {
         const route = `${allMessagesRoute}/${currentUser}/${selectedContact}`;
         data = await axios.get(route);
       } catch (error) {
-        console.log(error);
+        const errorMsg = 'Error fetching messages';
+        toast.error(errorMsg, {
+          ...toastOptions,
+          toastId: errorMsg,
+        });
       }
       setMessages(data.data);
     }
-    fn();
+    if (selectedContact !== undefined) {
+      fn();
+    }
   }, [selectedContact]);
 
   const sendMessage = useCallback(
@@ -63,7 +79,11 @@ export default function Chat() {
         });
         setMessages([...messages, response.data.data]);
       } catch (error) {
-        console.log(error);
+        const errorMsg = 'Error sending message';
+        toast.error(errorMsg, {
+          ...toastOptions,
+          toastId: errorMsg,
+        });
       }
     },
     [messages, setMessages, currentUser, selectedContact]
@@ -89,9 +109,14 @@ export default function Chat() {
             ))}
         </div>
         <div className="chat-main basis-4/6 border border-gray-600 overflow-auto">
-          <ChatInterface messages={messages} sendMessage={sendMessage} />
+          <ChatInterface
+            messages={messages}
+            sendMessage={sendMessage}
+            currentUser={currentUser}
+          />
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 }

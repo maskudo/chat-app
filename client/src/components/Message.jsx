@@ -1,21 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function Message({ message }) {
-  const navigate = useNavigate();
-  const [currentUser, setCurrentUser] = useState(undefined);
+// TODO: get currentUser from useContext
+
+export default function Message({ message, currentUser }) {
   const isCurrentUser = currentUser === message.sender._id;
-  useEffect(() => {
-    async function fn() {
-      const user = await JSON.parse(localStorage.getItem('chat-app-user'));
-      if (!user) {
-        navigate('/login');
-      } else {
-        setCurrentUser(user._id);
-      }
-    }
-    fn();
-  }, []);
   return (
     <div
       className={`flex items-start mb-4 ${isCurrentUser ? 'justify-end' : ''}`}

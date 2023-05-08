@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 import Message from './Message';
 
-export default function ChatInterface({ messages, sendMessage }) {
+export default function ChatInterface({ messages, sendMessage, currentUser }) {
   const messageContainerRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -27,7 +27,11 @@ export default function ChatInterface({ messages, sendMessage }) {
       >
         {messages &&
           messages.map((message) => (
-            <Message key={message._id} message={message} />
+            <Message
+              key={message._id}
+              message={message}
+              currentUser={currentUser}
+            />
           ))}
       </div>
       <div className="input-container w-full">

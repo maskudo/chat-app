@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { io } from 'socket.io-client';
 import { ToastContainer, toast } from 'react-toastify';
-import { allUsersRoute, allMessagesRoute } from '../utils/APIRoutes';
+import { allUsersRoute, allMessagesRoute, host } from '../utils/APIRoutes';
 import Contact from '../components/Contact';
 import ChatInterface from '../components/ChatInterface';
 
@@ -18,6 +19,8 @@ export default function Chat() {
   const [messages, setMessages] = useState(undefined);
   const [currentUser, setCurrentUser] = useState(undefined);
   const [selectedContact, setSelectedContact] = useState(undefined);
+  const [arrivalMsg, setArrivalMsg] = useState(undefined);
+  const socket = useRef();
 
   const navigate = useNavigate();
 
@@ -43,6 +46,13 @@ export default function Chat() {
     }
     fn();
   }, []);
+
+  useEffect(() => {
+    if (currentUser) {
+      socket.current = io(host);
+      socket.current.emit('add-user', currentUser);
+    }
+  }, [currentUser]);
 
   useEffect(() => {
     async function fn() {
@@ -77,6 +87,7 @@ export default function Chat() {
             'content-type': 'application/json',
           },
         });
+        socket.current.emit('send-msg', message);
         setMessages([...messages, response.data.data]);
       } catch (error) {
         const errorMsg = 'Error sending message';
@@ -88,6 +99,22 @@ export default function Chat() {
     },
     [messages, setMessages, currentUser, selectedContact]
   );
+
+  useEffect(() => {
+    // console.log('checking socket.current', socket.current);
+    if (socket.current) {
+      socket.current.on('msg-receive', (msg) => {
+        // console.log(msg);
+        setArrivalMsg({ fromSelf: false, message: msg });
+      });
+    }
+  }, [socket, selectedContact]);
+
+  useEffect(() => {
+    if (arrivalMsg) {
+      setMessages((prev) => [...prev, arrivalMsg.message]);
+    }
+  }, [arrivalMsg]);
 
   function handleContactClick(contact) {
     setSelectedContact(contact);

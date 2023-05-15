@@ -1,4 +1,5 @@
 import { useRef, useEffect } from 'react';
+import { ToastContainer } from 'react-toastify';
 import Message from './Message';
 
 export default function ChatInterface({ messages, sendMessage, currentUser }) {
@@ -45,6 +46,7 @@ export default function ChatInterface({ messages, sendMessage, currentUser }) {
           Send
         </button>
       </div>
+      <ToastContainer />
     </div>
   );
 }

@@ -13,14 +13,6 @@ function SetAvatar() {
   const [isLoading, setIsLoading] = useState([true]);
   const [selectedAvatar, setSelectedAvatar] = useState(undefined);
 
-  const toastOptions = {
-    position: 'bottom-right',
-    autoClose: 8000,
-    pauseOnHover: true,
-    draggable: true,
-    theme: 'light',
-  };
-
   const setProfilePicture = async () => {};
   useEffect(() => {
     async function myFunc() {

@@ -1,39 +1,34 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { io } from 'socket.io-client';
 import { ToastContainer, toast } from 'react-toastify';
 import { allUsersRoute, allMessagesRoute, host } from '../utils/APIRoutes';
 import Contact from '../components/Contact';
 import ChatInterface from '../components/ChatInterface';
+import { logoutUser } from '../slices/userSlice';
+import toastOptions from '../utils/toastOptions';
 
-const toastOptions = {
-  position: 'bottom-right',
-  autoClose: 8000,
-  pauseOnHover: true,
-  draggable: true,
-  theme: 'light',
-};
 export default function Chat() {
   const [contacts, setContacts] = useState(undefined);
   const [messages, setMessages] = useState(undefined);
-  const [currentUser, setCurrentUser] = useState(undefined);
   const [selectedContact, setSelectedContact] = useState(undefined);
   const [arrivalMsg, setArrivalMsg] = useState(undefined);
   const socket = useRef();
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.user?.user?._id);
 
   useEffect(() => {
     async function fn() {
-      const user = await JSON.parse(localStorage.getItem('chat-app-user'));
-      if (!user) {
+      if (!currentUser) {
         navigate('/login');
       } else {
-        setCurrentUser(user._id);
         let data = [];
         try {
-          data = await axios.get(`${allUsersRoute}/${user._id}`);
+          data = await axios.get(`${allUsersRoute}/${currentUser}`);
         } catch (error) {
           const errorMsg = 'Error fetching contacts';
           toast.error(errorMsg, {
@@ -51,6 +46,8 @@ export default function Chat() {
     if (currentUser) {
       socket.current = io(host);
       socket.current.emit('add-user', currentUser);
+    } else {
+      navigate('/login');
     }
   }, [currentUser]);
 
@@ -119,31 +116,42 @@ export default function Chat() {
   function handleContactClick(contact) {
     setSelectedContact(contact);
   }
+  function handleSignOut() {
+    console.log('signing out');
+    dispatch(logoutUser());
+  }
   return (
-    <div className="border-black bg-slate-800 w-screen h-screen text-white flex justify-center items-center">
-      <div className="chat-container w-9/12 h-5/6 bg-slate-500 flex">
-        <div className="contacts basis-2/6 border border-gray-600 overflow-auto">
-          {contacts &&
-            contacts.map((contact) => (
-              <Contact
-                key={contact.username}
-                contact={contact}
-                selected={selectedContact === contact._id}
-                onClick={() => {
-                  handleContactClick(contact._id);
-                }}
-              />
-            ))}
+    <>
+      <header>
+        <button onClick={handleSignOut} type="button">
+          Sign Out{' '}
+        </button>
+      </header>
+      <div className="border-black bg-slate-800 w-screen h-screen text-white flex justify-center items-center">
+        <div className="chat-container w-9/12 h-5/6 bg-slate-500 flex">
+          <div className="contacts basis-2/6 border border-gray-600 overflow-auto">
+            {contacts &&
+              contacts.map((contact) => (
+                <Contact
+                  key={contact.username}
+                  contact={contact}
+                  selected={selectedContact === contact._id}
+                  onClick={() => {
+                    handleContactClick(contact._id);
+                  }}
+                />
+              ))}
+          </div>
+          <div className="chat-main basis-4/6 border border-gray-600 overflow-auto">
+            <ChatInterface
+              messages={messages}
+              sendMessage={sendMessage}
+              currentUser={currentUser}
+            />
+          </div>
         </div>
-        <div className="chat-main basis-4/6 border border-gray-600 overflow-auto">
-          <ChatInterface
-            messages={messages}
-            sendMessage={sendMessage}
-            currentUser={currentUser}
-          />
-        </div>
+        <ToastContainer />
       </div>
-      <ToastContainer />
-    </div>
+    </>
   );
 }

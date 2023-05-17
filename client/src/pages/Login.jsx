@@ -1,9 +1,12 @@
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useDispatch, useSelector } from 'react-redux';
 import { loginRoute } from '../utils/APIRoutes';
+import { loginUser } from '../slices/userSlice';
+import toastOptions from '../utils/toastOptions';
 
 export default function Login() {
   const [values, setValues] = useState({
@@ -11,13 +14,8 @@ export default function Login() {
     password: '',
   });
   const navigate = useNavigate();
-  const toastOptions = {
-    position: 'bottom-right',
-    autoClose: 8000,
-    pauseOnHover: true,
-    draggable: true,
-    theme: 'light',
-  };
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user?.user?._id);
 
   const handleValidation = () => {
     const { password, username } = values;
@@ -36,22 +34,13 @@ export default function Login() {
     e.preventDefault();
     if (handleValidation()) {
       const { password, username } = values;
-      const { data } = await axios.post(
-        loginRoute,
-        {
-          username,
-          password,
-        },
-        {
-          headers: {
-            'content-type': 'application/json',
-          },
-        }
-      );
+      let data = await dispatch(loginUser({ username, password }));
+      data = data.payload;
+      console.log(data);
       if (data.status === false) {
         toast.error(data.msg, toastOptions);
       } else {
-        localStorage.setItem('chat-app-user', JSON.stringify(data.user));
+        console.log('logging in');
         navigate('/');
       }
     }
@@ -60,6 +49,12 @@ export default function Login() {
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
+
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, []);
 
   return (
     <div id="login" className="w-full max-w-xs mx-auto my-24">

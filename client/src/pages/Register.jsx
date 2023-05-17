@@ -1,11 +1,10 @@
-import axios from 'axios';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useDispatch } from 'react-redux';
-import { registerRoute } from '../utils/APIRoutes';
 import { registerUser } from '../slices/userSlice';
+import toastOptions from '../utils/toastOptions';
 
 function isAlphaNumeric(str) {
   let code;
@@ -34,13 +33,6 @@ export default function Register() {
   });
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const toastOptions = {
-    position: 'bottom-right',
-    autoClose: 8000,
-    pauseOnHover: true,
-    draggable: true,
-    theme: 'light',
-  };
 
   const handleValidation = () => {
     const { password, confirmPassword, username } = values;

@@ -3,7 +3,9 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useDispatch } from 'react-redux';
 import { registerRoute } from '../utils/APIRoutes';
+import { registerUser } from '../slices/userSlice';
 
 function isAlphaNumeric(str) {
   let code;
@@ -31,6 +33,7 @@ export default function Register() {
     confirmPassword: '',
   });
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const toastOptions = {
     position: 'bottom-right',
     autoClose: 8000,
@@ -75,18 +78,8 @@ export default function Register() {
     e.preventDefault();
     if (handleValidation()) {
       const { password, username } = values;
-      const { data } = await axios.post(
-        registerRoute,
-        {
-          username,
-          password,
-        },
-        {
-          headers: {
-            'content-type': 'application/json',
-          },
-        }
-      );
+      let data = await dispatch(registerUser({ password, username }));
+      data = data.payload;
       if (data.status === false) {
         toast.error(data.msg, toastOptions);
       } else {

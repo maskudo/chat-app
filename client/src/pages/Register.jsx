@@ -75,7 +75,6 @@ export default function Register() {
       if (data.status === false) {
         toast.error(data.msg, toastOptions);
       } else {
-        localStorage.setItem('chat-app-user', JSON.stringify(data.user));
         navigate('/');
       }
     }

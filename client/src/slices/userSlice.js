@@ -28,6 +28,7 @@ export const registerUser = createAsyncThunk(
       }
     );
     const { data } = response;
+    localStorage.setItem('chat-app-user', JSON.stringify(data.user));
     return data;
   }
 );
@@ -95,5 +96,3 @@ const userSlice = createSlice({
 
 export default userSlice.reducer;
 export const { logoutUser } = userSlice.actions;
-// module.exports = userSlice.reducer;
-// module.exports.registerUser = registerUser;

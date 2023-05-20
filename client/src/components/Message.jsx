@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-// TODO: get currentUser from useContext
-
-export default function Message({ message, currentUser }) {
+export default function Message({ message }) {
+  const currentUser = useSelector((state) => state.user?.user?._id);
   const isCurrentUser = currentUser === message.sender._id;
   return (
     <div

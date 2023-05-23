@@ -17,7 +17,7 @@ export default function Message({ message }) {
       )}
       <div
         className={`rounded-lg p-3 ${
-          isCurrentUser ? 'ml-4 bg-blue-300' : 'mr-4 bg-red-600'
+          isCurrentUser ? 'ml-4 sender' : 'mr-4 receiver'
         }`}
       >
         <p className="text-sm">{message.text}</p>

@@ -1,3 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+body {
+  background: #4d426d;
+}
+.chat-container {
+  background: #5c4f82;
+}
+.contact {
+  background: #4d426d;
+}
+.receiver {
+  background: #4d426d;
+}
+.sender {
+  background: #efa985;
+}
+header {
+  color: #efa985;
+  box-shadow: 1px 3px 3px 3px #5c4f82;
+}

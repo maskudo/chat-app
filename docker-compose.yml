@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  server:
+    image: notes:server
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    networks:
+      - app-network
+    environment:
+      - DATABASE_HOST=db
+  db:
+    image: mongo:latest
+    networks:
+      - app-network
+
+  client:
+    image: notes:client
+    ports:
+      - "5173:5173"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

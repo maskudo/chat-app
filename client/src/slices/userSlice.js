@@ -77,7 +77,8 @@ const userSlice = createSlice({
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
-        (state.user = null), (state.error = action.error.message);
+        state.user = null;
+        state.error = action.error.message;
       })
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
@@ -89,7 +90,8 @@ const userSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-        (state.user = null), (state.error = action.error.message);
+        state.user = null;
+        state.error = action.error.message;
       });
   },
 });

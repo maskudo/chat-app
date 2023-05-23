@@ -9,6 +9,7 @@ import Contact from '../components/Contact';
 import ChatInterface from '../components/ChatInterface';
 import { logoutUser } from '../slices/userSlice';
 import toastOptions from '../utils/toastOptions';
+import { Header } from '../components/Header';
 
 export default function Chat() {
   const [contacts, setContacts] = useState(undefined);
@@ -19,16 +20,17 @@ export default function Chat() {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const currentUser = useSelector((state) => state.user?.user?._id);
+  const currentUser = useSelector((state) => state.user?.user);
+  const currentUserId = currentUser?._id;
 
   useEffect(() => {
     async function fn() {
-      if (!currentUser) {
+      if (!currentUserId) {
         navigate('/login');
       } else {
         let data = [];
         try {
-          data = await axios.get(`${allUsersRoute}/${currentUser}`);
+          data = await axios.get(`${allUsersRoute}/${currentUserId}`);
         } catch (error) {
           const errorMsg = 'Error fetching contacts';
           toast.error(errorMsg, {
@@ -43,19 +45,19 @@ export default function Chat() {
   }, []);
 
   useEffect(() => {
-    if (currentUser) {
+    if (currentUserId) {
       socket.current = io(host);
-      socket.current.emit('add-user', currentUser);
+      socket.current.emit('add-user', currentUserId);
     } else {
       navigate('/login');
     }
-  }, [currentUser]);
+  }, [currentUserId]);
 
   useEffect(() => {
     async function fn() {
       let data = [];
       try {
-        const route = `${allMessagesRoute}/${currentUser}/${selectedContact}`;
+        const route = `${allMessagesRoute}/${currentUserId}/${selectedContact}`;
         data = await axios.get(route);
       } catch (error) {
         const errorMsg = 'Error fetching messages';
@@ -76,7 +78,7 @@ export default function Chat() {
       try {
         const message = {
           text,
-          sender: currentUser,
+          sender: currentUserId,
           receiver: selectedContact,
         };
         const response = await axios.post(`${allMessagesRoute}`, message, {
@@ -94,7 +96,7 @@ export default function Chat() {
         });
       }
     },
-    [messages, setMessages, currentUser, selectedContact]
+    [messages, setMessages, currentUserId, selectedContact]
   );
 
   useEffect(() => {
@@ -113,23 +115,18 @@ export default function Chat() {
     }
   }, [arrivalMsg]);
 
-  function handleContactClick(contact) {
+  const handleContactClick = (contact) => {
     setSelectedContact(contact);
-  }
-  function handleSignOut() {
-    console.log('signing out');
+  };
+  const handleSignOut = () => {
     dispatch(logoutUser());
-  }
+  };
   return (
-    <>
-      <header>
-        <button onClick={handleSignOut} type="button">
-          Sign Out{' '}
-        </button>
-      </header>
-      <div className="border-black bg-slate-800 w-screen h-screen text-white flex justify-center items-center">
-        <div className="chat-container w-9/12 h-5/6 bg-slate-500 flex">
-          <div className="contacts basis-2/6 border border-gray-600 overflow-auto">
+    <div className="h-screen chat-app">
+      <Header handleSignOut={handleSignOut} currentUser={currentUser} />
+      <div className="border-black  w-screen h-full  text-white flex justify-center items-center">
+        <div className="chat-container w-9/12 h-5/6  flex">
+          <div className="contacts basis-2/6 border  overflow-auto">
             {contacts &&
               contacts.map((contact) => (
                 <Contact
@@ -146,12 +143,13 @@ export default function Chat() {
             <ChatInterface
               messages={messages}
               sendMessage={sendMessage}
-              currentUser={currentUser}
+              currentUser={currentUserId}
+              selectedContact={selectedContact}
             />
           </div>
         </div>
         <ToastContainer />
       </div>
-    </>
+    </div>
   );
 }

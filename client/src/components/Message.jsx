@@ -6,7 +6,7 @@ export default function Message({ message }) {
   const isCurrentUser = currentUser === message.sender._id;
   return (
     <div
-      className={`flex items-start mb-4 ${isCurrentUser ? 'justify-end' : ''}`}
+      className={`flex items-start m-4  ${isCurrentUser ? 'justify-end' : ''}`}
     >
       {!isCurrentUser && (
         <img

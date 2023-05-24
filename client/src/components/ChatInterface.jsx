@@ -1,6 +1,8 @@
 import { useRef, useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
 import { useSelector } from 'react-redux';
+import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Message from './Message';
 
 export default function ChatInterface({
@@ -29,9 +31,9 @@ export default function ChatInterface({
 
   return (
     <>
-      <div className="chat-container flex flex-col justify-between h-full">
+      <div className="chat-container my-0 flex flex-col h-full">
         <div
-          className="message-container overflow-auto"
+          className="message-container basis-5/6 overflow-auto"
           ref={messageContainerRef}
         >
           {messages &&
@@ -44,15 +46,25 @@ export default function ChatInterface({
             ))}
         </div>
         {!!selectedContact && (
-          <div className="input-container w-full">
-            <form onSubmit={(e) => handleSendMessage(e)}>
+          <div className="input-container w-full basis-1/6 pt-4">
+            <form
+              onSubmit={(e) => handleSendMessage(e)}
+              className="mx-4 flex justify-between"
+            >
               <input
                 type="text"
                 placeholder="Type your message..."
                 ref={inputRef}
-                className="text-black w-full"
+                className="text-black h-16 w-5/6 rounded-lg p-4 msg-input"
               />
-              <button type="submit">Send</button>
+              <button
+                type="submit"
+                className="h-14 w-14 mx-2 text-2xl rounded-full bg-green-400 hover:bg-green-500"
+              >
+                <div className="button h-auto w-auto rounded-full">
+                  <FontAwesomeIcon icon={faPaperPlane} className="" />
+                </div>
+              </button>
             </form>
           </div>
         )}

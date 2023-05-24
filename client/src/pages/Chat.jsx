@@ -122,24 +122,27 @@ export default function Chat() {
     dispatch(logoutUser());
   };
   return (
-    <div className="h-screen chat-app">
-      <Header handleSignOut={handleSignOut} currentUser={currentUser} />
-      <div className="border-black  w-screen h-full  text-white flex justify-center items-center">
-        <div className="chat-container w-9/12 h-5/6  flex">
-          <div className="contacts basis-2/6 border  overflow-auto">
+    <div className="h-screen chat-app overflow-hidden">
+      <div className="header flex justify-center">
+        <Header handleSignOut={handleSignOut} currentUser={currentUser} />
+      </div>
+      <div className=" w-screen h-full  text-white flex justify-center items-center mt-0">
+        <div className="chat-container w-9/12 flex ">
+          <div className="contacts basis-2/6 rounded-lg overflow-auto mr-8">
             {contacts &&
               contacts.map((contact) => (
                 <Contact
                   key={contact.username}
                   contact={contact}
                   selected={selectedContact === contact._id}
+                  latestMessage={messages && messages[messages.length - 1]}
                   onClick={() => {
                     handleContactClick(contact._id);
                   }}
                 />
               ))}
           </div>
-          <div className="chat-main basis-4/6 border border-gray-600 overflow-auto">
+          <div className="chat-main basis-4/6  rounded-lg">
             <ChatInterface
               messages={messages}
               sendMessage={sendMessage}

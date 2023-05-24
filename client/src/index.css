@@ -4,11 +4,11 @@
 body {
   background: #4d426d;
 }
-.chat-container {
+.contacts {
   background: #5c4f82;
 }
-.contact {
-  background: #4d426d;
+.chat-main {
+  background: #5c4f82;
 }
 .receiver {
   background: #4d426d;
@@ -18,5 +18,20 @@ body {
 }
 header {
   color: #efa985;
-  box-shadow: 1px 3px 3px 3px #5c4f82;
+  /* box-shadow: 1px 3px 3px 3px #5c4f82; */
+}
+header > image {
+  border: solid 1px #efa985;
+}
+.selected {
+  border-bottom: solid 1px #efa985;
+}
+.chat-container {
+  height: 90%;
+  margin-top: 2rem;
+  margin-bottom: 5rem;
+}
+.msg-input:focus {
+  outline: none; /* Remove default focus outline */
+  box-shadow: 0 0 5px #efa985; /* Apply a red box shadow when focused */
 }

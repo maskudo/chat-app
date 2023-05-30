@@ -6,6 +6,7 @@ const socket = require("socket.io");
 const userRoutes = require("./routes/userRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 const User = require("./models/userModel");
+const { expressjwt } = require("express-jwt");
 
 const app = express();
 require("dotenv").config();

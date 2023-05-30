@@ -1,8 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { toast } from 'react-toastify';
 import { loginRoute, registerRoute } from '../utils/APIRoutes';
-import toastOptions from '../utils/toastOptions';
 
 const userFromLocalStorage = await JSON.parse(
   localStorage.getItem('chat-app-user')
@@ -29,6 +27,7 @@ export const registerUser = createAsyncThunk(
     );
     const { data } = response;
     localStorage.setItem('chat-app-user', JSON.stringify(data.user));
+    localStorage.setItem('token', data.token);
     return data;
   }
 );
@@ -50,7 +49,7 @@ export const loginUser = createAsyncThunk(
     );
     const { data } = response;
     localStorage.setItem('chat-app-user', JSON.stringify(data.user));
-    console.log(data);
+    localStorage.setItem('token', data.token);
     return data;
   }
 );

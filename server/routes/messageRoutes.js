@@ -4,12 +4,13 @@ const {
   getMessageBySenderReceiver,
   deleteMessageById,
 } = require("../controllers/messageController");
+const auth = require("../jwtAuth");
 
 const router = require("express").Router();
 
-router.post("/", createMessage);
-router.get("/", getAllMessages);
-router.get("/:sender/:receiver", getMessageBySenderReceiver);
-router.delete("/:id", deleteMessageById);
+router.post("/", auth, createMessage);
+router.get("/", auth, getAllMessages);
+router.get("/:sender/:receiver", auth, getMessageBySenderReceiver);
+router.delete("/:id", auth, deleteMessageById);
 
 module.exports = router;

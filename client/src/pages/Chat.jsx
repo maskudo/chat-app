@@ -54,11 +54,17 @@ export default function Chat() {
   }, [currentUserId]);
 
   useEffect(() => {
-    async function fn() {
+    async function getMessages() {
       let data = [];
       try {
+        const token = localStorage.getItem('token');
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
         const route = `${allMessagesRoute}/${currentUserId}/${selectedContact}`;
-        data = await axios.get(route);
+        data = await axios.get(route, config);
       } catch (error) {
         const errorMsg = 'Error fetching messages';
         toast.error(errorMsg, {
@@ -69,7 +75,7 @@ export default function Chat() {
       setMessages(data.data);
     }
     if (selectedContact !== undefined) {
-      fn();
+      getMessages();
     }
   }, [selectedContact]);
 
@@ -81,11 +87,18 @@ export default function Chat() {
           sender: currentUserId,
           receiver: selectedContact,
         };
-        const response = await axios.post(`${allMessagesRoute}`, message, {
+        const token = localStorage.getItem('token');
+        const config = {
           headers: {
+            Authorization: `Bearer ${token}`,
             'content-type': 'application/json',
           },
-        });
+        };
+        const response = await axios.post(
+          `${allMessagesRoute}`,
+          message,
+          config
+        );
         socket.current.emit('send-msg', message);
         setMessages([...messages, response.data.data]);
       } catch (error) {

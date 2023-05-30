@@ -1,5 +1,6 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 module.exports.register = async (req, res, next) => {
   try {
@@ -19,7 +20,10 @@ module.exports.register = async (req, res, next) => {
     //mongodb returns a read only copy in user so convert it to js object
     const userObject = user.toObject();
     delete userObject.password;
-    return res.json({ status: true, user: userObject });
+    const token = jwt.sign({ user: userObject }, process.env.SECRET_KEY, {
+      expiresIn: "7 days",
+    });
+    return res.status(201).json({ status: true, user: userObject, token });
   } catch (error) {
     next(error);
   }
@@ -44,7 +48,10 @@ module.exports.login = async (req, res, next) => {
     }
     const userObject = user.toObject();
     delete userObject.password;
-    return res.json({ status: true, user: userObject });
+    const token = jwt.sign({ user: userObject }, process.env.SECRET_KEY, {
+      expiresIn: "7 days",
+    });
+    return res.status(201).json({ status: true, user: userObject, token });
   } catch (error) {
     next(error);
   }

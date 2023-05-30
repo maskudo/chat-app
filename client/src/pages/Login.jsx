@@ -36,7 +36,6 @@ export default function Login() {
       const { password, username } = values;
       let data = await dispatch(loginUser({ username, password }));
       data = data.payload;
-      console.log(data);
       if (data.status === false) {
         toast.error(data.msg, toastOptions);
       } else {
@@ -54,7 +53,7 @@ export default function Login() {
     if (user) {
       navigate('/');
     }
-  }, []);
+  }, [user]);
 
   return (
     <div id="login" className="w-full max-w-xs mx-auto my-24">

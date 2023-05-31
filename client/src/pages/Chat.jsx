@@ -10,6 +10,7 @@ import ChatInterface from '../components/ChatInterface';
 import { logoutUser } from '../slices/userSlice';
 import toastOptions from '../utils/toastOptions';
 import { Header } from '../components/Header';
+import { getAllMessages } from '../slices/messageSlice';
 
 export default function Chat() {
   const [contacts, setContacts] = useState(undefined);
@@ -55,24 +56,19 @@ export default function Chat() {
 
   useEffect(() => {
     async function getMessages() {
-      let data = [];
-      try {
-        const token = localStorage.getItem('token');
-        const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
-        const route = `${allMessagesRoute}/${currentUserId}/${selectedContact}`;
-        data = await axios.get(route, config);
-      } catch (error) {
-        const errorMsg = 'Error fetching messages';
-        toast.error(errorMsg, {
-          ...toastOptions,
-          toastId: errorMsg,
-        });
+      if (!currentUserId) {
+        navigate('/login');
+      } else {
+        let data = await dispatch(
+          getAllMessages({ currentUserId, selectedContact })
+        );
+        data = data.payload;
+        if (data.status === false) {
+          toast.error(data.msg, toastOptions);
+        } else {
+          setMessages(data.data);
+        }
       }
-      setMessages(data.data);
     }
     if (selectedContact !== undefined) {
       getMessages();
@@ -109,6 +105,22 @@ export default function Chat() {
         });
       }
     },
+    // async function getMessages() {
+    //   if (!currentUserId) {
+    //     navigate('/login');
+    //   } else {
+    //     let data = await dispatch(
+    //       getAllMessages({ currentUserId, selectedContact })
+    //     );
+    //     data = data.payload;
+    //     if (data.status === false) {
+    //       const errorMsg = 'Error sending message';
+    //       toast.error(data.msg, {...toastOptions, toastId: errorMsg});
+    //     } else {
+    //       setMessages(data.data);
+    //     }
+    //   }
+    // }
     [messages, setMessages, currentUserId, selectedContact]
   );
 

@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { allMessagesRoute } from '../utils/APIRoutes';
 
@@ -43,7 +43,12 @@ export const sendNewMessage = createAsyncThunk(
 const messageSlice = createSlice({
   name: 'messages',
   initialState,
-  reducers: {},
+  reducers: {
+    addNewMessage: (state, action) => {
+      const newMessage = action.payload;
+      state.messages = [...state.messages, newMessage];
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getAllMessages.pending, (state) => {
@@ -76,3 +81,4 @@ const messageSlice = createSlice({
 });
 
 export default messageSlice.reducer;
+export const { addNewMessage } = messageSlice.actions;

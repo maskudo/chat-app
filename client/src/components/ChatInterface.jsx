@@ -1,8 +1,8 @@
-import { useRef, useEffect } from 'react';
-import { ToastContainer } from 'react-toastify';
-import { useSelector } from 'react-redux';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
+import { ToastContainer } from 'react-toastify';
 import Message from './Message';
 
 export default function ChatInterface({

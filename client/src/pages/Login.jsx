@@ -1,10 +1,8 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginRoute } from '../utils/APIRoutes';
 import { loginUser } from '../slices/userSlice';
 import toastOptions from '../utils/toastOptions';
 
@@ -39,7 +37,6 @@ export default function Login() {
       if (data.status === false) {
         toast.error(data.msg, toastOptions);
       } else {
-        console.log('logging in');
         navigate('/');
       }
     }

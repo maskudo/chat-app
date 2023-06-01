@@ -1,20 +1,23 @@
-import { useCallback, useEffect, useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import { io } from 'socket.io-client';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
-import { allUsersRoute, host } from '../utils/APIRoutes';
-import Contact from '../components/Contact';
+import { io } from 'socket.io-client';
 import ChatInterface from '../components/ChatInterface';
-import { logoutUser } from '../slices/userSlice';
-import toastOptions from '../utils/toastOptions';
+import Contact from '../components/Contact';
 import { Header } from '../components/Header';
-import { getAllMessages, sendNewMessage } from '../slices/messageSlice';
+import {
+  addNewMessage,
+  getAllMessages,
+  sendNewMessage,
+} from '../slices/messageSlice';
+import { logoutUser } from '../slices/userSlice';
+import { allUsersRoute, host } from '../utils/APIRoutes';
+import toastOptions from '../utils/toastOptions';
 
 export default function Chat() {
   const [contacts, setContacts] = useState(undefined);
-  const [messages, setMessages] = useState(undefined);
   const [selectedContact, setSelectedContact] = useState(undefined);
   const [arrivalMsg, setArrivalMsg] = useState(undefined);
   const socket = useRef();
@@ -23,6 +26,7 @@ export default function Chat() {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.user?.user);
   const currentUserId = currentUser?._id;
+  const messages = useSelector((state) => state.message.messages);
 
   useEffect(() => {
     async function fn() {
@@ -65,8 +69,6 @@ export default function Chat() {
         data = data.payload;
         if (data.status === false) {
           toast.error(data.msg, toastOptions);
-        } else {
-          setMessages(data);
         }
       }
     }
@@ -90,10 +92,10 @@ export default function Chat() {
       } else {
         // console.log(data.data);
         socket.current.emit('send-msg', data.data);
-        setMessages([...messages, data.data]);
+        dispatch(addNewMessage(data.data));
       }
     },
-    [messages, setMessages, currentUserId, selectedContact]
+    [messages, currentUserId, selectedContact]
   );
 
   useEffect(() => {
@@ -107,7 +109,7 @@ export default function Chat() {
 
   useEffect(() => {
     if (arrivalMsg) {
-      setMessages([...messages, arrivalMsg.message]);
+      dispatch(addNewMessage(arrivalMsg.message));
     }
   }, [arrivalMsg]);
 
@@ -117,6 +119,7 @@ export default function Chat() {
   const handleSignOut = () => {
     dispatch(logoutUser());
   };
+
   return (
     <div className="h-screen chat-app overflow-hidden">
       <div className="header flex justify-center">
@@ -139,12 +142,20 @@ export default function Chat() {
               ))}
           </div>
           <div className="chat-main basis-4/6  rounded-lg">
-            <ChatInterface
-              messages={messages}
-              sendMessage={sendMessage}
-              currentUser={currentUserId}
-              selectedContact={selectedContact}
-            />
+            {selectedContact ? (
+              <ChatInterface
+                messages={messages}
+                sendMessage={sendMessage}
+                currentUser={currentUserId}
+                selectedContact={selectedContact}
+              />
+            ) : (
+              <div className="text-2xl text-center flex flex-col justify-center h-full">
+                <div className="my-64 border-2 border-orange-300 rounded-lg mx-32 p-2">
+                  Select a contact to start chatting.
+                </div>
+              </div>
+            )}
           </div>
         </div>
         <ToastContainer />

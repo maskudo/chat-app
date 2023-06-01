@@ -4,13 +4,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { io } from 'socket.io-client';
 import { ToastContainer, toast } from 'react-toastify';
-import { allUsersRoute, allMessagesRoute, host } from '../utils/APIRoutes';
+import { allUsersRoute, host } from '../utils/APIRoutes';
 import Contact from '../components/Contact';
 import ChatInterface from '../components/ChatInterface';
 import { logoutUser } from '../slices/userSlice';
 import toastOptions from '../utils/toastOptions';
 import { Header } from '../components/Header';
-import { getAllMessages } from '../slices/messageSlice';
+import { getAllMessages, sendNewMessage } from '../slices/messageSlice';
 
 export default function Chat() {
   const [contacts, setContacts] = useState(undefined);
@@ -66,7 +66,7 @@ export default function Chat() {
         if (data.status === false) {
           toast.error(data.msg, toastOptions);
         } else {
-          setMessages(data.data);
+          setMessages(data);
         }
       }
     }
@@ -77,50 +77,22 @@ export default function Chat() {
 
   const sendMessage = useCallback(
     async (text) => {
-      try {
-        const message = {
-          text,
-          sender: currentUserId,
-          receiver: selectedContact,
-        };
-        const token = localStorage.getItem('token');
-        const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'content-type': 'application/json',
-          },
-        };
-        const response = await axios.post(
-          `${allMessagesRoute}`,
-          message,
-          config
-        );
-        socket.current.emit('send-msg', message);
-        setMessages([...messages, response.data.data]);
-      } catch (error) {
+      const message = {
+        text,
+        sender: currentUserId,
+        receiver: selectedContact,
+      };
+      let data = await dispatch(sendNewMessage({ message }));
+      data = data.payload;
+      if (data.status === false) {
         const errorMsg = 'Error sending message';
-        toast.error(errorMsg, {
-          ...toastOptions,
-          toastId: errorMsg,
-        });
+        toast.error(data.msg, { ...toastOptions, toastId: errorMsg });
+      } else {
+        // console.log(data.data);
+        socket.current.emit('send-msg', data.data);
+        setMessages([...messages, data.data]);
       }
     },
-    // async function getMessages() {
-    //   if (!currentUserId) {
-    //     navigate('/login');
-    //   } else {
-    //     let data = await dispatch(
-    //       getAllMessages({ currentUserId, selectedContact })
-    //     );
-    //     data = data.payload;
-    //     if (data.status === false) {
-    //       const errorMsg = 'Error sending message';
-    //       toast.error(data.msg, {...toastOptions, toastId: errorMsg});
-    //     } else {
-    //       setMessages(data.data);
-    //     }
-    //   }
-    // }
     [messages, setMessages, currentUserId, selectedContact]
   );
 
@@ -128,7 +100,6 @@ export default function Chat() {
     // console.log('checking socket.current', socket.current);
     if (socket.current) {
       socket.current.on('msg-receive', (msg) => {
-        // console.log(msg);
         setArrivalMsg({ fromSelf: false, message: msg });
       });
     }
@@ -136,7 +107,7 @@ export default function Chat() {
 
   useEffect(() => {
     if (arrivalMsg) {
-      setMessages((prev) => [...prev, arrivalMsg.message]);
+      setMessages([...messages, arrivalMsg.message]);
     }
   }, [arrivalMsg]);
 

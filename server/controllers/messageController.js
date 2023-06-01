@@ -9,8 +9,8 @@ module.exports.createMessage = async (req, res, next) => {
       receiver,
     });
     const popMessage = await Message.findOne({ _id: message._id })
-      .populate("sender")
-      .populate("receiver");
+      .populate({ path: "sender", select: "-password" })
+      .populate({ path: "receiver", select: "-password" });
     return res.json({ status: true, data: popMessage });
   } catch (error) {
     next(error);
@@ -26,8 +26,8 @@ module.exports.getMessageBySenderReceiver = async (req, res, next) => {
         { sender: receiver, receiver: sender },
       ],
     })
-      .populate("sender")
-      .populate("receiver");
+      .populate({ path: "sender", select: "-password" })
+      .populate({ path: "receiver", select: "-password" });
     return res.json(messages);
   } catch (error) {
     next(error);

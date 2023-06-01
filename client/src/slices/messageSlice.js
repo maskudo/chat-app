@@ -5,6 +5,7 @@ import { allMessagesRoute } from '../utils/APIRoutes';
 const initialState = {
   messages: [],
   loading: false,
+  newMessage: null,
   error: null,
 };
 export const getAllMessages = createAsyncThunk(
@@ -19,11 +20,11 @@ export const getAllMessages = createAsyncThunk(
     };
     const route = `${allMessagesRoute}/${currentUserId}/${selectedContact}`;
     data = await axios.get(route, config);
-    return data;
+    return data.data;
   }
 );
 
-export const sendMessage = createAsyncThunk(
+export const sendNewMessage = createAsyncThunk(
   'messages/send-message',
   async ({ message }) => {
     let data = [];
@@ -34,8 +35,8 @@ export const sendMessage = createAsyncThunk(
       },
     };
     const route = `${allMessagesRoute}`;
-    data = await axios.get(route, message, config);
-    return data;
+    data = await axios.post(route, message, config);
+    return data.data;
   }
 );
 
@@ -56,6 +57,19 @@ const messageSlice = createSlice({
       .addCase(getAllMessages.rejected, (state, action) => {
         state.loading = false;
         state.messages = null;
+        state.error = action.error.message;
+      })
+      .addCase(sendNewMessage.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(sendNewMessage.fulfilled, (state, action) => {
+        state.loading = false;
+        state.newMessage = action.payload;
+        state.error = null;
+      })
+      .addCase(sendNewMessage.rejected, (state, action) => {
+        state.loading = false;
+        state.newMessage = null;
         state.error = action.error.message;
       });
   },

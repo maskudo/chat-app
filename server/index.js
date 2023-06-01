@@ -56,7 +56,7 @@ io.on("connection", (socket) => {
     // console.log(data);
     // console.log(global.onlineUsers);
     // const sendUserSocket = onlineUsers.get(data.receiver);
-    const sendUserSocket = onlineUsers[data.receiver];
+    const sendUserSocket = onlineUsers[data.receiver._id];
     // console.log("sendusersocker", sendUserSocket);
     if (sendUserSocket) {
       getUserFromId(data.sender).then((sender) => {

@@ -55,52 +55,49 @@ export default function Login() {
   }, [user]);
 
   return (
-    <div id="login" className="w-full max-w-xs mx-auto my-24">
-      <form
-        onSubmit={(e) => handleSubmit(e)}
-        className="bg-white shadow-md rounded px-8 pt-6 mb-4"
-      >
-        <label
-          htmlFor="username"
-          className="block text-gray-700 text-sm font-bold mb-2"
-        >
+    <div
+      id="login"
+      className="login w-full max-w-xs mx-auto my-36 p-5 shadow-md rounded-lg"
+    >
+      <form onSubmit={(e) => handleSubmit(e)} className=" mb-4 text-white">
+        <label htmlFor="username" className="block  text-sm font-normal mb-2">
           Enter Username
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline text-black"
             type="text"
             name="username"
-            placeholder="username"
+            placeholder="Username"
             required
             id="username"
             onChange={(e) => handleChange(e)}
           />
         </label>
 
-        <label
-          htmlFor="password"
-          className="block text-gray-700 text-sm font-bold mb-2"
-        >
+        <label htmlFor="password" className="block text-sm  mb-2">
           Enter password
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline text-black"
             type="password"
             name="password"
             id="password"
             required
-            placeholder="password"
+            placeholder="Password"
             onChange={(e) => handleChange(e)}
           />
         </label>
 
         <button
           type="submit"
-          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          className="bg-orange-400 hover:bg-orange-300 text-white  my-2 py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
         >
           Login!
         </button>
-        <div>
+        <div className="py-2">
           Don&apos;t have an account?
-          <Link className="text-blue-600 visited:text-blue-600" to="/register">
+          <Link
+            className="text-orange-200 visited:text-orange-200 hover:text-orange-300 mx-1"
+            to="/register"
+          >
             Register
           </Link>
         </div>

@@ -22,8 +22,7 @@ export default function Chat() {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const currentUser = useSelector((state) => state.user?.user);
-  const currentUserId = currentUser?._id;
+  const currentUserId = useSelector((state) => state.user?.user?._id);
   const messages = useSelector((state) => state.message.messages);
 
   useEffect(() => {
@@ -117,7 +116,7 @@ export default function Chat() {
 
   return (
     <div className="h-screen chat-app overflow-hidden">
-      <div className=" w-screen h-full  text-white flex justify-center items-center mt-0">
+      <div className="w-screen h-full  text-white flex justify-center items-center mt-0">
         <div className="chat-container w-9/12 flex ">
           <div className="contacts basis-2/6 rounded-lg overflow-auto mr-8">
             {contacts &&

@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import { updateAvatar, updateUser } from '../slices/userSlice';
+import toastOptions from '../utils/toastOptions';
 
 export default function SetAvatar() {
   const [currentAvatar, setCurrentAvatar] = useState('');
@@ -9,10 +11,10 @@ export default function SetAvatar() {
   const fallbackImage = user?.avatarImage;
   const inputRef = useRef(null);
   const dispatch = useDispatch();
+
   const onPreview = () => {
-    if (currentAvatar) {
-      setPreview(true);
-    }
+    setPreview(true);
+    setCurrentAvatar(inputRef.current.value);
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,11 +24,21 @@ export default function SetAvatar() {
       );
       inputRef.current.value = '';
       setPreview(false);
-      if (res.payload) {
-        dispatch(updateUser(res.payload));
+      if (!res.payload) {
+        const errorMsg = res.error.message;
+        toast.error(errorMsg, {
+          ...toastOptions,
+          toastId: errorMsg,
+        });
+        return;
       }
+      dispatch(updateUser(res.payload));
     } catch (err) {
-      console.error(err.message);
+      const errorMsg = err.message;
+      toast.error(errorMsg, {
+        ...toastOptions,
+        toastId: errorMsg,
+      });
     }
   };
   return (
@@ -49,8 +61,7 @@ export default function SetAvatar() {
         <div className="input-container w-full flex justify-center">
           <input
             ref={inputRef}
-            onChange={(e) => {
-              setCurrentAvatar(e.target.value);
+            onChange={() => {
               setPreview(false);
             }}
             type="url"

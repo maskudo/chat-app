@@ -3,7 +3,7 @@ import axios from 'axios';
 import { allMessagesRoute } from '../utils/APIRoutes';
 
 const initialState = {
-  messages: [],
+  messages: null,
   loading: false,
   newMessage: null,
   error: null,

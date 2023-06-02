@@ -37,7 +37,6 @@ export default function Login() {
       if (data.status === false) {
         toast.error(data.msg, toastOptions);
       } else {
-        console.log(data);
         await dispatch(updateUser(data.user));
         navigate('/');
       }

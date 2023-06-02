@@ -84,7 +84,6 @@ const userSlice = createSlice({
       state.error = null;
     },
     updateUser: (state, action) => {
-      console.log(action.payload);
       state.user = action.payload;
       localStorage.setItem('chat-app-user', JSON.stringify(action.payload));
     },

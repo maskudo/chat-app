@@ -5,14 +5,11 @@ import { useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import Message from './Message';
 
-export default function ChatInterface({
-  messages,
-  sendMessage,
-  selectedContact,
-}) {
+export default function ChatInterface({ sendMessage, selectedContact }) {
   const messageContainerRef = useRef(null);
   const inputRef = useRef(null);
   const currentUser = useSelector((state) => state.user?.user?._id);
+  const messages = useSelector((state) => state.message.messages);
 
   useEffect(() => {
     // Scroll to the bottom of the message container whenever new messages are added

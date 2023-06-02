@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { io } from 'socket.io-client';
 import ChatInterface from '../components/ChatInterface';
 import Contact from '../components/Contact';
@@ -23,7 +23,6 @@ export default function Chat() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const currentUserId = useSelector((state) => state.user?.user?._id);
-  const messages = useSelector((state) => state.message.messages);
 
   useEffect(() => {
     async function fn() {
@@ -34,7 +33,7 @@ export default function Chat() {
         try {
           data = await axios.get(`${allUsersRoute}/${currentUserId}`);
         } catch (error) {
-          const errorMsg = 'Error fetching contacts';
+          const errorMsg = error.message;
           toast.error(errorMsg, {
             ...toastOptions,
             toastId: errorMsg,
@@ -63,10 +62,12 @@ export default function Chat() {
         let data = await dispatch(
           getAllMessages({ currentUserId, selectedContact })
         );
-        data = data.payload;
-        if (data.status === false) {
-          toast.error(data.msg, toastOptions);
+        if (!data.payload) {
+          const errorMsg = data.error.message;
+          toast.error(errorMsg, { ...toastOptions, toastId: errorMsg });
+          return;
         }
+        data = data.payload;
       }
     }
     if (selectedContact !== undefined) {
@@ -82,17 +83,20 @@ export default function Chat() {
         receiver: selectedContact,
       };
       let data = await dispatch(sendNewMessage({ message }));
-      data = data.payload;
-      if (data.status === false) {
-        const errorMsg = 'Error sending message';
-        toast.error(data.msg, { ...toastOptions, toastId: errorMsg });
-      } else {
-        // console.log(data.data);
-        socket.current.emit('send-msg', data.data);
-        dispatch(addNewMessage(data.data));
+      if (!data.payload) {
+        const errorMsg = data.error.message;
+        toast.error(errorMsg, {
+          ...toastOptions,
+          toastId: errorMsg,
+        });
+        return;
       }
+      data = data.payload;
+      // console.log(data.data);
+      socket.current.emit('send-msg', data.data);
+      dispatch(addNewMessage(data.data));
     },
-    [messages, currentUserId, selectedContact]
+    [currentUserId, selectedContact]
   );
 
   useEffect(() => {
@@ -125,7 +129,6 @@ export default function Chat() {
                   key={contact.username}
                   contact={contact}
                   selected={selectedContact === contact._id}
-                  latestMessage={messages && messages[messages.length - 1]}
                   onClick={() => {
                     handleContactClick(contact._id);
                   }}
@@ -135,7 +138,6 @@ export default function Chat() {
           <div className="chat-main basis-4/6  rounded-lg">
             {selectedContact ? (
               <ChatInterface
-                messages={messages}
                 sendMessage={sendMessage}
                 currentUser={currentUserId}
                 selectedContact={selectedContact}
@@ -149,7 +151,6 @@ export default function Chat() {
             )}
           </div>
         </div>
-        <ToastContainer />
       </div>
     </div>
   );

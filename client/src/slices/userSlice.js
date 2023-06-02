@@ -63,6 +63,10 @@ const userSlice = createSlice({
       state.user = null;
       state.error = null;
     },
+    updateUser: (state, action) => {
+      state.user = action.payload;
+      localStorage.setItem('chat-app-user', JSON.stringify(action.payload));
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -96,4 +100,4 @@ const userSlice = createSlice({
 });
 
 export default userSlice.reducer;
-export const { logoutUser } = userSlice.actions;
+export const { logoutUser, updateUser } = userSlice.actions;

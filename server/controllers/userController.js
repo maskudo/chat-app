@@ -69,3 +69,40 @@ module.exports.getAllUsers = async (req, res, next) => {
     next(error);
   }
 };
+
+module.exports.getUser = async (req, res, next) => {
+  const userId = req.params.id;
+  try {
+    const user = await User.findOne({ _id: userId }).select("-password");
+    return res.json(user);
+  } catch (error) {
+    res.status(404).json({
+      msg: "User not found",
+      status: false,
+    });
+  }
+};
+
+module.exports.setAvatar = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { avatarImage } = req.body;
+    console.log(userId, avatarImage);
+    const user = await User.findOne({ _id: userId }).select("-password");
+    if (!user) {
+      return res.status(404).json({
+        msg: "Username not found!",
+        status: false,
+      });
+    }
+    if (avatarImage) {
+      user.avatarImage = avatarImage;
+    }
+    await user.save();
+    return res.status(201).json({ status: true, user });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ status: false, message: "Error updating user" });
+  }
+};

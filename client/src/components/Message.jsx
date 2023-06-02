@@ -10,7 +10,7 @@ export default function Message({ message }) {
     >
       {!isCurrentUser && (
         <img
-          src={message.receiver.avatarImage}
+          src={message.sender.avatarImage}
           alt="Contact Avatar"
           className="h-8 w-8 rounded-full mr-3"
         />

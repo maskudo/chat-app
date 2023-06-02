@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useDispatch } from 'react-redux';
-import { registerUser } from '../slices/userSlice';
+import { registerUser, updateUser } from '../slices/userSlice';
 import toastOptions from '../utils/toastOptions';
 
 function isAlphaNumeric(str) {
@@ -75,6 +75,7 @@ export default function Register() {
       if (data.status === false) {
         toast.error(data.msg, toastOptions);
       } else {
+        await dispatch(updateUser(data.user));
         navigate('/');
       }
     }

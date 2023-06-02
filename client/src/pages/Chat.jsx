@@ -6,13 +6,11 @@ import { ToastContainer, toast } from 'react-toastify';
 import { io } from 'socket.io-client';
 import ChatInterface from '../components/ChatInterface';
 import Contact from '../components/Contact';
-import { Header } from '../components/Header';
 import {
   addNewMessage,
   getAllMessages,
   sendNewMessage,
 } from '../slices/messageSlice';
-import { logoutUser } from '../slices/userSlice';
 import { allUsersRoute, host } from '../utils/APIRoutes';
 import toastOptions from '../utils/toastOptions';
 
@@ -116,15 +114,9 @@ export default function Chat() {
   const handleContactClick = (contact) => {
     setSelectedContact(contact);
   };
-  const handleSignOut = () => {
-    dispatch(logoutUser());
-  };
 
   return (
     <div className="h-screen chat-app overflow-hidden">
-      <div className="header flex justify-center">
-        <Header handleSignOut={handleSignOut} currentUser={currentUser} />
-      </div>
       <div className=" w-screen h-full  text-white flex justify-center items-center mt-0">
         <div className="chat-container w-9/12 flex ">
           <div className="contacts basis-2/6 rounded-lg overflow-auto mr-8">

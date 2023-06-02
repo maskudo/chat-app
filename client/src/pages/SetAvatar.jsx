@@ -30,33 +30,53 @@ export default function SetAvatar() {
     }
   };
   return (
-    <div className="set-avatar">
-      <form onSubmit={(e) => handleSubmit(e)}>
-        <input
-          ref={inputRef}
-          onChange={(e) => {
-            setCurrentAvatar(e.target.value);
-            setPreview(false);
-          }}
-          type="url"
-          required
-        />
-        <button type="button" onClick={onPreview}>
-          Preview
-        </button>
-        {preview && <button type="submit">Submit</button>}
-      </form>
-      {preview && (
+    <div className="set-avatar w-full h-full flex flex-col  justify-center align-middle my-32 ">
+      <div className="image-container w-full flex justify-center">
         <img
-          src={currentAvatar}
+          src={currentAvatar || fallbackImage}
           onError={(e) => {
             e.target.onError = null;
             e.target.src = fallbackImage;
           }}
-          className="h-10 w-10 rounded-full mx-5 bg-orange-300"
+          className="h-20 w-20 rounded-full mx-5 bg-orange-300"
           alt="user-avatar"
         />
-      )}
+      </div>
+      <form
+        onSubmit={(e) => handleSubmit(e)}
+        className=" flex flex-col justify-center align-middle w-full my-4"
+      >
+        <div className="input-container w-full flex justify-center">
+          <input
+            ref={inputRef}
+            onChange={(e) => {
+              setCurrentAvatar(e.target.value);
+              setPreview(false);
+            }}
+            type="url"
+            placeholder="Enter Avatar URL"
+            className="rounded-sm p-1 w-96"
+            required
+          />
+        </div>
+        <div className="buttons  w-full flex justify-center text-white">
+          <button
+            type="button"
+            className="preview rounded-sm bg-blue-400 p-2 m-2 "
+            onClick={onPreview}
+          >
+            Preview
+          </button>
+          <button
+            type="submit"
+            disabled={!preview}
+            className="rounded-sm bg-blue-400 p-2 m-2 disabled:opacity-75 "
+          >
+            Submit
+          </button>
+        </div>
+      </form>
+      )
     </div>
   );
 }

@@ -1,14 +1,13 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
-import { setAvatarRoute } from '../utils/APIRoutes';
-import { updateUser } from '../slices/userSlice';
+import { updateAvatar, updateUser } from '../slices/userSlice';
 
 export default function SetAvatar() {
   const [currentAvatar, setCurrentAvatar] = useState('');
   const [preview, setPreview] = useState(false);
   const user = useSelector((state) => state.user.user);
   const fallbackImage = user?.avatarImage;
+  const inputRef = useRef(null);
   const dispatch = useDispatch();
   const onPreview = () => {
     if (currentAvatar) {
@@ -18,16 +17,14 @@ export default function SetAvatar() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.patch(
-        `${setAvatarRoute}/${user?._id}/setavatar`,
-        {
-          avatarImage: currentAvatar,
-        }
+      const res = await dispatch(
+        updateAvatar({ user, avatarImage: currentAvatar })
       );
-      console.log(res.data.user);
-      setCurrentAvatar('');
+      inputRef.current.value = '';
       setPreview(false);
-      dispatch(updateUser(res.data.user));
+      if (res.payload) {
+        dispatch(updateUser(res.payload));
+      }
     } catch (err) {
       console.error(err.message);
     }
@@ -36,6 +33,7 @@ export default function SetAvatar() {
     <div className="set-avatar">
       <form onSubmit={(e) => handleSubmit(e)}>
         <input
+          ref={inputRef}
           onChange={(e) => {
             setCurrentAvatar(e.target.value);
             setPreview(false);

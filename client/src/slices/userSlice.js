@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { loginRoute, registerRoute } from '../utils/APIRoutes';
+import { loginRoute, registerRoute, setAvatarRoute } from '../utils/APIRoutes';
 
 const userFromLocalStorage = await JSON.parse(
   localStorage.getItem('chat-app-user')
@@ -54,6 +54,26 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+export const updateAvatar = createAsyncThunk(
+  'user/avatar',
+  async ({ user, avatarImage }) => {
+    const token = localStorage.getItem('token');
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const res = await axios.patch(
+      `${setAvatarRoute}/${user?._id}/setavatar`,
+      {
+        avatarImage,
+      },
+      config
+    );
+    return res.data.user;
+  }
+);
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -64,6 +84,7 @@ const userSlice = createSlice({
       state.error = null;
     },
     updateUser: (state, action) => {
+      console.log(action.payload);
       state.user = action.payload;
       localStorage.setItem('chat-app-user', JSON.stringify(action.payload));
     },

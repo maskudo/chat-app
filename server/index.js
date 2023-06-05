@@ -6,7 +6,6 @@ const socket = require("socket.io");
 const userRoutes = require("./routes/userRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 const User = require("./models/userModel");
-const { expressjwt } = require("express-jwt");
 
 const app = express();
 require("dotenv").config();
@@ -57,7 +56,7 @@ io.on("connection", (socket) => {
     // console.log(global.onlineUsers);
     // const sendUserSocket = onlineUsers.get(data.receiver);
     const sendUserSocket = onlineUsers[data.receiver._id];
-    // console.log("sendusersocker", sendUserSocket);
+    // console.log("sendusersocket", sendUserSocket);
     if (sendUserSocket) {
       getUserFromId(data.sender).then((sender) => {
         getUserFromId(data.receiver).then((receiver) => {
@@ -68,6 +67,24 @@ io.on("connection", (socket) => {
       });
     }
   });
+  socket.on("req-contact-status", (data) => {
+    const sendUserSocket = onlineUsers[data.senderId];
+    const contactSocket = onlineUsers[data.contactId];
+    if (contactSocket) {
+      io.to(sendUserSocket).emit("contact-status", {
+        message: "hmm tru",
+        status: true,
+      });
+    } else {
+      io.to(sendUserSocket).emit("contact-status", {
+        status: false,
+        message: `false lol ${contactSocket}`,
+      });
+    }
+  });
+  socket.on("error", (error) => {
+    console.log(error);
+  });
 
   socket.on("disconnect", () => {
     const userId = Object.keys(global.onlineUsers).find(
@@ -75,7 +92,7 @@ io.on("connection", (socket) => {
     );
     if (userId) {
       delete global.onlineUsers[userId];
-      // console.log("User disconnected:", userId);
+      console.log("User disconnected:", userId);
     }
   });
 });

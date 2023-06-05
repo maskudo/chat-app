@@ -17,6 +17,7 @@ import toastOptions from '../utils/toastOptions';
 export default function Chat() {
   const [contacts, setContacts] = useState(undefined);
   const [selectedContact, setSelectedContact] = useState(undefined);
+  const [contactOnlineStatus, setContactOnlineStatus] = useState(false);
   const [arrivalMsg, setArrivalMsg] = useState(undefined);
   const socket = useRef();
 
@@ -70,8 +71,13 @@ export default function Chat() {
         data = data.payload;
       }
     }
+
     if (selectedContact !== undefined) {
       getMessages();
+      socket.current.emit('req-contact-status', {
+        senderId: currentUserId,
+        contactId: selectedContact,
+      });
     }
   }, [selectedContact]);
 
@@ -103,7 +109,11 @@ export default function Chat() {
     // console.log('checking socket.current', socket.current);
     if (socket.current) {
       socket.current.on('msg-receive', (msg) => {
+        setContactOnlineStatus(true);
         setArrivalMsg({ fromSelf: false, message: msg });
+      });
+      socket.current.on('contact-status', (msg) => {
+        setContactOnlineStatus(msg.status);
       });
     }
   }, [socket, selectedContact]);
@@ -120,6 +130,9 @@ export default function Chat() {
 
   return (
     <div className="h-screen chat-app overflow-hidden">
+      <div className="contact-status">
+        {contactOnlineStatus ? 'online' : 'offline'}
+      </div>
       <div className="w-screen h-full  text-white flex justify-center items-center mt-0">
         <div className="chat-container w-9/12 flex ">
           <div className="contacts basis-2/6 rounded-lg overflow-auto mr-8">

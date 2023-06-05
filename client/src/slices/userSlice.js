@@ -7,6 +7,8 @@ const userFromLocalStorage = await JSON.parse(
 );
 const initialState = {
   user: userFromLocalStorage,
+  selectedContact: null,
+  selectedContactOnlineStatus: false,
   loading: false,
   error: null,
 };
@@ -87,6 +89,12 @@ const userSlice = createSlice({
       state.user = action.payload;
       localStorage.setItem('chat-app-user', JSON.stringify(action.payload));
     },
+    setSelectedContact: (state, action) => {
+      state.selectedContact = action.payload;
+    },
+    setSelectedContactOnlineStatus: (state, action) => {
+      state.selectedContactOnlineStatus = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -120,4 +128,9 @@ const userSlice = createSlice({
 });
 
 export default userSlice.reducer;
-export const { logoutUser, updateUser } = userSlice.actions;
+export const {
+  logoutUser,
+  updateUser,
+  setSelectedContact,
+  setSelectedContactOnlineStatus,
+} = userSlice.actions;

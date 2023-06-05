@@ -11,19 +11,21 @@ import {
   getAllMessages,
   sendNewMessage,
 } from '../slices/messageSlice';
+import {
+  setSelectedContact,
+  setSelectedContactOnlineStatus,
+} from '../slices/userSlice';
 import { allUsersRoute, host } from '../utils/APIRoutes';
 import toastOptions from '../utils/toastOptions';
 
 export default function Chat() {
   const [contacts, setContacts] = useState(undefined);
-  const [selectedContact, setSelectedContact] = useState(undefined);
-  const [contactOnlineStatus, setContactOnlineStatus] = useState(false);
   const [arrivalMsg, setArrivalMsg] = useState(undefined);
+  const currentUserId = useSelector((state) => state.user?.user?._id);
+  const selectedContact = useSelector((state) => state.user?.selectedContact);
   const socket = useRef();
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const currentUserId = useSelector((state) => state.user?.user?._id);
 
   useEffect(() => {
     async function fn() {
@@ -72,7 +74,7 @@ export default function Chat() {
       }
     }
 
-    if (selectedContact !== undefined) {
+    if (selectedContact) {
       getMessages();
       socket.current.emit('req-contact-status', {
         senderId: currentUserId,
@@ -109,11 +111,11 @@ export default function Chat() {
     // console.log('checking socket.current', socket.current);
     if (socket.current) {
       socket.current.on('msg-receive', (msg) => {
-        setContactOnlineStatus(true);
+        dispatch(setSelectedContactOnlineStatus(true));
         setArrivalMsg({ fromSelf: false, message: msg });
       });
       socket.current.on('contact-status', (msg) => {
-        setContactOnlineStatus(msg.status);
+        dispatch(setSelectedContactOnlineStatus(msg.status));
       });
     }
   }, [socket, selectedContact]);
@@ -125,14 +127,11 @@ export default function Chat() {
   }, [arrivalMsg]);
 
   const handleContactClick = (contact) => {
-    setSelectedContact(contact);
+    dispatch(setSelectedContact(contact));
   };
 
   return (
     <div className="h-screen chat-app overflow-hidden">
-      <div className="contact-status">
-        {contactOnlineStatus ? 'online' : 'offline'}
-      </div>
       <div className="w-screen h-full  text-white flex justify-center items-center mt-0">
         <div className="chat-container w-9/12 flex ">
           <div className="contacts basis-2/6 rounded-lg overflow-auto mr-8">
@@ -141,7 +140,6 @@ export default function Chat() {
                 <Contact
                   key={contact.username}
                   contact={contact}
-                  selected={selectedContact === contact._id}
                   onClick={() => {
                     handleContactClick(contact._id);
                   }}

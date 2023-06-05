@@ -1,4 +1,12 @@
-function Contact({ contact, selected, onClick }) {
+import { useSelector } from 'react-redux';
+
+function Contact({ contact, onClick }) {
+  const selected =
+    useSelector((state) => state.user?.selectedContact) === contact._id;
+  const selectedContactOnlineStatus = useSelector(
+    (state) => state.user?.selectedContactOnlineStatus
+  );
+
   return (
     <div
       className={`${
@@ -9,7 +17,9 @@ function Contact({ contact, selected, onClick }) {
       <img
         src={contact.avatarImage}
         alt=""
-        className="w-12 h-12 rounded-full ml-3"
+        className={`${
+          selected && selectedContactOnlineStatus && 'border-2 border-green-500'
+        } w-12 h-12 rounded-full ml-3`}
       />
       <div>{contact.username}</div>
     </div>

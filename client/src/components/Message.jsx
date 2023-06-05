@@ -3,6 +3,10 @@ import { useSelector } from 'react-redux';
 
 export default function Message({ message }) {
   const currentUser = useSelector((state) => state.user?.user?._id);
+  const selectedContact = useSelector((state) => state.user?.selectedContact);
+  const selectedContactOnlineStatus = useSelector(
+    (state) => state.user?.selectedContactOnlineStatus
+  );
   const isCurrentUser = currentUser === message.sender._id;
   return (
     <div
@@ -12,7 +16,11 @@ export default function Message({ message }) {
         <img
           src={message.sender.avatarImage}
           alt="Contact Avatar"
-          className="h-8 w-8 rounded-full mr-3"
+          className={`${
+            selectedContact &&
+            selectedContactOnlineStatus &&
+            'border border-green-500'
+          } h-8 w-8 rounded-full mr-3`}
         />
       )}
       <div

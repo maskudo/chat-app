@@ -15,6 +15,7 @@ app.use(express.json());
 
 app.use("/api/auth", userRoutes);
 app.use("/api/messages", messageRoutes);
+app.use(express.static("uploads"));
 
 mongoose.set("strictQuery", false);
 mongoose

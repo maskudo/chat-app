@@ -56,23 +56,22 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+// TODO: Update this
 export const updateAvatar = createAsyncThunk(
   'user/avatar',
   async ({ user, avatarImage }) => {
-    const token = localStorage.getItem('token');
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
-    const res = await axios.patch(
-      `${setAvatarRoute}/${user?._id}/setavatar`,
-      {
-        avatarImage,
-      },
-      config
-    );
-    return res.data.user;
+    // const token = localStorage.getItem('token');
+    // const config = {
+    //   headers: {
+    //     Authorization: `Bearer ${token}`,
+    //   },
+    // };
+    // const res = await axios.patch(
+    //   `${setAvatarRoute}/${user?._id}/setavatar`,
+    //   avatarImage,
+    //   config
+    // );
+    // return res.data.user;
   }
 );
 

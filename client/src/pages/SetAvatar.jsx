@@ -1,44 +1,49 @@
 import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 import { updateAvatar, updateUser } from '../slices/userSlice';
 import toastOptions from '../utils/toastOptions';
+import { setAvatarRoute } from '../utils/APIRoutes';
 
 export default function SetAvatar() {
   const [currentAvatar, setCurrentAvatar] = useState('');
-  const [preview, setPreview] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
   const user = useSelector((state) => state.user.user);
   const fallbackImage = user?.avatarImage;
-  const inputRef = useRef(null);
   const dispatch = useDispatch();
 
-  const onPreview = () => {
-    setPreview(true);
-    setCurrentAvatar(inputRef.current.value);
-  };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const res = await dispatch(
-        updateAvatar({ user, avatarImage: currentAvatar })
-      );
-      inputRef.current.value = '';
-      setPreview(false);
-      if (!res.payload) {
-        const errorMsg = res.error.message;
-        toast.error(errorMsg, {
-          ...toastOptions,
-          toastId: errorMsg,
-        });
-        return;
-      }
-      dispatch(updateUser(res.payload));
-    } catch (err) {
-      const errorMsg = err.message;
-      toast.error(errorMsg, {
-        ...toastOptions,
-        toastId: errorMsg,
-      });
+    if (!selectedFile) {
+      return;
+    }
+    const formData = new FormData();
+    formData.append('avatar', selectedFile);
+    const token = localStorage.getItem('token');
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const res = await axios.patch(
+      `${setAvatarRoute}/${user?._id}/setavatar`,
+      formData,
+      config
+    );
+    setCurrentAvatar(res.data.user.avatarImage);
+    dispatch(updateUser(res.data.user));
+  };
+
+  const handleChange = (e) => {
+    const file = e.target.files[0];
+    if (file.size > 4 * 1024 * 1024) {
+      toast.error('File size should be smaller than 4 MB', toastOptions);
+      e.target.value = '';
+    } else {
+      const url = URL.createObjectURL(file);
+      setCurrentAvatar(url);
+      setSelectedFile(file);
     }
   };
   return (
@@ -60,27 +65,18 @@ export default function SetAvatar() {
       >
         <div className="input-container w-full flex justify-center">
           <input
-            ref={inputRef}
-            onChange={() => {
-              setPreview(false);
-            }}
-            type="url"
-            placeholder="Enter Avatar URL"
-            className="rounded-sm p-1 w-96"
+            name="avatar"
+            type="file"
+            placeholder="Avatar"
+            id="avatar"
             required
+            accept="image/png, image/jpeg"
+            onChange={handleChange}
           />
         </div>
         <div className="buttons  w-full flex justify-center text-white">
           <button
-            type="button"
-            className="preview rounded-sm bg-blue-400 p-2 m-2 "
-            onClick={onPreview}
-          >
-            Preview
-          </button>
-          <button
             type="submit"
-            disabled={!preview}
             className="rounded-sm bg-blue-400 p-2 m-2 disabled:opacity-75 "
           >
             Submit

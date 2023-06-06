@@ -29,7 +29,6 @@ export default function ChatInterface({ sendMessage, selectedContact }) {
     setMsg('');
   };
   const handleEmojiClick = (emojiObject, event) => {
-    console.log(emojiObject.emoji);
     setMsg(`${msg}${emojiObject.emoji}`);
     setDisplayEmojiPicker(false);
   };

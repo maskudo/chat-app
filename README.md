@@ -1,19 +1,5 @@
 # chat-app
 
-## Building docker images
-
-### Server:
-
-`cd server`
-`docker build --tag chat:server`
-
-### Client:
-
-`cd client`
-`docker build --tag chat:client`
-
----
-
 ## Running with docker compose:
 
 From Root directory:\

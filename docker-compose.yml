@@ -3,6 +3,7 @@ version: "3"
 services:
   server:
     image: notes:server
+    build: ./server
     ports:
       - "5000:5000"
     depends_on:
@@ -18,6 +19,7 @@ services:
 
   client:
     image: notes:client
+    build: ./client
     ports:
       - "5173:5173"
     networks:

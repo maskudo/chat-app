@@ -1,4 +1,5 @@
-import { faFaceSmile, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { faFaceSmileBeam } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -62,31 +63,25 @@ export default function ChatInterface({ sendMessage, selectedContact }) {
               onSubmit={(e) => handleSendMessage(e)}
               className="mx-4 flex justify-between"
             >
-              <button
-                type="button"
-                className="h-14 w-14 mx-2 text-2xl rounded-full text-white bg-yellow-500"
-              >
-                <div className="button h-auto w-auto rounded-full">
-                  <FontAwesomeIcon
-                    icon={faFaceSmile}
-                    onClick={handleDisplayEmojiPicker}
-                  />
-                </div>
+              <button type="button" className="">
+                <FontAwesomeIcon
+                  icon={faFaceSmileBeam}
+                  onClick={handleDisplayEmojiPicker}
+                  className="h-10 w-10 text-orange-400"
+                />
               </button>
               <input
                 type="text"
                 placeholder="Type your message..."
                 onChange={(e) => setMsg(e.target.value)}
                 value={msg}
-                className="text-black h-16 w-5/6 rounded-lg p-4 msg-input"
+                className="text-black h-16 w-5/6 rounded-lg p-4 msg-input border border-1"
               />
-              <button
-                type="submit"
-                className="h-14 w-14 mx-2 text-2xl rounded-full bg-green-400 hover:bg-green-500"
-              >
-                <div className="button h-auto w-auto rounded-full">
-                  <FontAwesomeIcon icon={faPaperPlane} className="" />
-                </div>
+              <button type="submit" className="">
+                <FontAwesomeIcon
+                  icon={faPaperPlane}
+                  className="h-10 w-10 text-blue-400"
+                />
               </button>
             </form>
           </div>

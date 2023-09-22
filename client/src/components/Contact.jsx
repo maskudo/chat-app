@@ -10,8 +10,8 @@ function Contact({ contact, onClick }) {
   return (
     <div
       className={`${
-        selected && 'selected'
-      } contact flex gap-4 h-16 pt-2 border-b m-8`}
+        selected && 'bg-gray-200'
+      } contact flex gap-4 h-24 pt-2 border-b mx-2 rounded-lg`}
       onClick={onClick}
     >
       <img

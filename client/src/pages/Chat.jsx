@@ -132,9 +132,9 @@ export default function Chat() {
 
   return (
     <div className="h-screen chat-app overflow-hidden">
-      <div className="w-screen h-full  text-white flex justify-center items-center mt-0">
+      <div className="w-screen h-full   flex justify-center items-center mt-0">
         <div className="chat-container w-9/12 flex ">
-          <div className="contacts basis-2/6 rounded-lg overflow-auto mr-8">
+          <div className="basis-2/6 rounded-lg overflow-auto mr-8 shadow-md shadow-gray-300">
             {contacts &&
               contacts.map((contact) => (
                 <Contact
@@ -146,7 +146,7 @@ export default function Chat() {
                 />
               ))}
           </div>
-          <div className="chat-main basis-4/6  rounded-lg">
+          <div className="chat-main basis-4/6  rounded-lg shadow-md shadow-gray-300  ">
             {selectedContact ? (
               <ChatInterface
                 sendMessage={sendMessage}

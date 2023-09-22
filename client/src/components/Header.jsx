@@ -11,17 +11,28 @@ export function Header() {
     dispatch(logoutUser());
   };
   return (
-    <header className="flex w-9/12 justify-end drop-shadow-sm py-2">
-      <Link to="/setavatar" className="mx-5">
-        <img
-          src={currentUser?.avatarImage}
-          alt="Current User Avatar"
-          className="h-10 w-10 rounded-full  bg-orange-300"
-        />
-      </Link>
-      <button onClick={handleSignOut} type="button" className="text-xl">
-        <FontAwesomeIcon icon={faRightFromBracket} />
-      </button>
+    <header className="w-full ">
+      <div className="header w-9/12 flex  justify-between drop-shadow-sm py-2 shadow-md shadow-gray-300 mx-auto px-2">
+        <Link to="/" className="logo flex justify-center align-middle ">
+          <img
+            src="../../assets/images/logo.png"
+            alt="company-logo"
+            className="h-16 w-auto"
+          />
+        </Link>
+        <div className="right flex align-middle justify-center ">
+          <Link to="/setavatar" className="mx-5 pt-3">
+            <img
+              src={currentUser?.avatarImage}
+              alt="Current User Avatar"
+              className="h-10 w-10 rounded-full  bg-orange-300 "
+            />
+          </Link>
+          <button onClick={handleSignOut} type="button" className="text-xl">
+            <FontAwesomeIcon icon={faRightFromBracket} />
+          </button>
+        </div>
+      </div>
     </header>
   );
 }

@@ -1,13 +1,10 @@
-import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
 import { Form, Input, Button, message } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faKey, faUser } from '@fortawesome/free-solid-svg-icons';
 import 'react-toastify/dist/ReactToastify.css';
 import { useDispatch } from 'react-redux';
 import { registerUser, updateUser } from '../slices/userSlice';
-import toastOptions from '../utils/toastOptions';
 
 export default function Register() {
   const navigate = useNavigate();

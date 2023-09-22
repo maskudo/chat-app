@@ -1,155 +1,127 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
+import { Form, Input, Button, message } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faKey, faUser } from '@fortawesome/free-solid-svg-icons';
 import 'react-toastify/dist/ReactToastify.css';
 import { useDispatch } from 'react-redux';
 import { registerUser, updateUser } from '../slices/userSlice';
 import toastOptions from '../utils/toastOptions';
 
-function isAlphaNumeric(str) {
-  let code;
-  let i;
-  let len;
-
-  for (i = 0, len = str.length; i < len; i += 1) {
-    code = str.charCodeAt(i);
-    if (
-      !(code > 47 && code < 58) && // numeric (0-9)
-      !(code > 64 && code < 91) && // upper alpha (A-Z)
-      !(code > 96 && code < 123)
-    ) {
-      // lower alpha (a-z)
-      return false;
-    }
-  }
-  return true;
-}
-
 export default function Register() {
-  const [values, setValues] = useState({
-    username: '',
-    password: '',
-    confirmPassword: '',
-  });
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleValidation = () => {
-    const { password, confirmPassword, username } = values;
-    let isSuccess = true;
-    if (username.length < 3) {
-      toast.error(
-        'Username should be longer than 3 characters in length',
-        toastOptions
-      );
-      isSuccess = false;
+  const handleSubmit = async (values) => {
+    const { username, password } = values;
+    let data = await dispatch(registerUser({ password, username }));
+    data = data.payload;
+    if (data.status === false) {
+      message.error(data.msg);
+    } else {
+      await dispatch(updateUser(data.user));
+      navigate('/');
     }
-    if (!isAlphaNumeric(username)) {
-      toast.error(
-        'Username can only contain alphanumeric characters',
-        toastOptions
-      );
-      isSuccess = false;
-    }
-    if (password !== confirmPassword) {
-      toast.error('Passwords do not match.', toastOptions);
-      isSuccess = false;
-    }
-    if (password.length < 7) {
-      toast.error(
-        'Password should be longer than 7 characters in length',
-        toastOptions
-      );
-      isSuccess = false;
-    }
-
-    return isSuccess;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (handleValidation()) {
-      const { password, username } = values;
-      let data = await dispatch(registerUser({ password, username }));
-      data = data.payload;
-      if (data.status === false) {
-        toast.error(data.msg, toastOptions);
-      } else {
-        await dispatch(updateUser(data.user));
-        navigate('/');
-      }
-    }
-  };
-
-  const handleChange = (e) => {
-    setValues({ ...values, [e.target.name]: e.target.value });
   };
 
   return (
-    <div
-      id="register"
-      className="register w-full max-w-xs mx-auto my-36 p-5 shadow-md rounded-lg"
-    >
-      <form
-        onSubmit={(e) => handleSubmit(e)}
-        className="mb-4 text-white font-normal"
-      >
-        <label htmlFor="username" className="block  text-sm  mb-2">
-          Enter Username
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline text-black"
-            type="text"
+    <div id="register" className="">
+      <div className="w-1/5 mx-auto p-4 mt-16 shadow-md shadow-gray-300">
+        <header className="my-4 flex flex-col">
+          <div className="logo flex justify-center align-middle">
+            <img src="../../assets/images/logo.png" alt="company-logo" />
+          </div>
+        </header>
+        <Form className=" m-auto" layout="vertical" onFinish={handleSubmit}>
+          <Form.Item
+            label="Username"
             name="username"
-            placeholder="Username"
             required
-            id="username"
-            onChange={(e) => handleChange(e)}
-          />
-        </label>
+            rules={[
+              { required: true, message: 'Username is required' },
+              {
+                min: 3,
+                message: 'Username must be at least 3 characters long.',
+              },
+              {
+                max: 20,
 
-        <label htmlFor="password" className="block  text-sm  mb-2">
-          Enter password
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3  leading-tight focus:outline-none focus:shadow-outline text-black"
-            type="password"
-            name="password"
-            id="password"
-            required
-            placeholder="Password"
-            onChange={(e) => handleChange(e)}
-          />
-        </label>
-
-        <label htmlFor="confirmPassword" className="block text-sm  mb-2">
-          Confirm password
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline text-black"
-            type="password"
-            placeholder="Confirm Password"
-            name="confirmPassword"
-            required
-            id="confirmPassword"
-            onChange={(e) => handleChange(e)}
-          />
-        </label>
-
-        <button
-          type="submit"
-          className="bg-orange-400 hover:bg-orange-300 text-white  my-2 py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
-        >
-          Register!
-        </button>
-        <div className="py-2">
-          Already have an account?
-          <Link
-            className="text-orange-200 visited:text-orange-200 hover:text-orange-300 mx-1 drop-shadow-md"
-            to="/login"
+                message: 'Username must be at most 20 characters long.',
+              },
+              {
+                pattern: /^[a-zA-Z0-9_]+$/,
+                message:
+                  'Username can contain only letters, numbers and _ characters. ',
+              },
+            ]}
           >
-            Login
+            <Input required addonBefore={<FontAwesomeIcon icon={faUser} />} />
+          </Form.Item>
+          <Form.Item
+            label="Password"
+            name="password"
+            rules={[
+              {
+                max: 30,
+                message: 'Password cannot be more than 30 characters long',
+              },
+              {
+                pattern:
+                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=!])[A-Za-z\d@#$%^&+=!]{8,}$/,
+                message:
+                  'Password must contain at least 1 uppercase, 1 lowercase, 1 digit, 1 special character and 8 characters long.',
+              },
+            ]}
+          >
+            <Input.Password
+              required
+              addonBefore={<FontAwesomeIcon icon={faKey} />}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Confirm Password"
+            name="confirmPassword"
+            rules={[
+              {
+                required: true,
+                message: 'Please confirm your password!',
+              },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue('password') === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error('Passwords do not match'));
+                },
+              }),
+            ]}
+          >
+            <Input.Password
+              required
+              addonBefore={<FontAwesomeIcon icon={faKey} />}
+            />
+          </Form.Item>
+          <Form.Item>
+            <Button
+              type="primary"
+              className="bg-blue-400 text-white my-2"
+              // styles={{ color: 'white' }}
+              block
+              size="large"
+              htmlType="submit"
+            >
+              Sign Up
+            </Button>
+          </Form.Item>
+        </Form>
+        <nav className="">
+          Already have an account?{' '}
+          <Link to="/login" className="text-blue-400">
+            Sign In
           </Link>
-        </div>
-        <ToastContainer />
-      </form>
+        </nav>
+      </div>
     </div>
   );
 }

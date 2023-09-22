@@ -1,50 +1,27 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useDispatch, useSelector } from 'react-redux';
+import { Form, Input, Button, message } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faKey, faUser } from '@fortawesome/free-solid-svg-icons';
 import { loginUser, updateUser } from '../slices/userSlice';
-import toastOptions from '../utils/toastOptions';
 
 export default function Login() {
-  const [values, setValues] = useState({
-    username: '',
-    password: '',
-  });
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user?.user?._id);
 
-  const handleValidation = () => {
+  const handleSubmit = async (values) => {
     const { password, username } = values;
-    let isSuccess = true;
-    if (password === '') {
-      toast.error('Username and password required.', toastOptions);
-      isSuccess = false;
-    } else if (username === '') {
-      toast.error('Username and password required.', toastOptions);
-      isSuccess = false;
+    let data = await dispatch(loginUser({ username, password }));
+    data = data.payload;
+    if (data.status === false) {
+      message.error(data.msg);
+    } else {
+      await dispatch(updateUser(data.user));
+      navigate('/');
     }
-    return isSuccess;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (handleValidation()) {
-      const { password, username } = values;
-      let data = await dispatch(loginUser({ username, password }));
-      data = data.payload;
-      if (data.status === false) {
-        toast.error(data.msg, toastOptions);
-      } else {
-        await dispatch(updateUser(data.user));
-        navigate('/');
-      }
-    }
-  };
-
-  const handleChange = (e) => {
-    setValues({ ...values, [e.target.name]: e.target.value });
   };
 
   useEffect(() => {
@@ -54,54 +31,44 @@ export default function Login() {
   }, [user]);
 
   return (
-    <div
-      id="login"
-      className="login w-full max-w-xs mx-auto my-36 p-5 shadow-md rounded-lg"
-    >
-      <form onSubmit={(e) => handleSubmit(e)} className=" mb-4 text-white">
-        <label htmlFor="username" className="block  text-sm font-normal mb-2">
-          Enter Username
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline text-black"
-            type="text"
-            name="username"
-            placeholder="Username"
-            required
-            id="username"
-            onChange={(e) => handleChange(e)}
-          />
-        </label>
-
-        <label htmlFor="password" className="block text-sm  mb-2">
-          Enter password
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline text-black"
-            type="password"
-            name="password"
-            id="password"
-            required
-            placeholder="Password"
-            onChange={(e) => handleChange(e)}
-          />
-        </label>
-
-        <button
-          type="submit"
-          className="bg-orange-400 hover:bg-orange-300 text-white  my-2 py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
-        >
-          Login!
-        </button>
-        <div className="py-2">
-          Don&apos;t have an account?
-          <Link
-            className="text-orange-200 visited:text-orange-200 hover:text-orange-300 mx-1"
-            to="/register"
-          >
-            Register
+    <div id="login" className="">
+      <div className="w-1/5 mx-auto p-4 mt-16 shadow-md shadow-gray-300">
+        <header className="my-4 flex flex-col">
+          <div className="logo flex justify-center align-middle">
+            <img src="../../assets/images/logo.png" alt="company-logo" />
+          </div>
+          <h1 className="text-center text-3xl text-gray-700">Welcome Back!</h1>
+        </header>
+        <Form className=" m-auto" layout="vertical" onFinish={handleSubmit}>
+          <Form.Item label="Username" name="username">
+            <Input required addonBefore={<FontAwesomeIcon icon={faUser} />} />
+          </Form.Item>
+          <Form.Item label="Password" name="password">
+            <Input.Password
+              required
+              addonBefore={<FontAwesomeIcon icon={faKey} />}
+            />
+          </Form.Item>
+          <Form.Item>
+            <Button
+              type="primary"
+              className="bg-blue-400 text-white my-2"
+              // styles={{ color: 'white' }}
+              block
+              size="large"
+              htmlType="submit"
+            >
+              Login
+            </Button>
+          </Form.Item>
+        </Form>
+        <nav className="">
+          Don&apos;t have an account?{' '}
+          <Link to="/register" className="text-blue-400">
+            Sign Up
           </Link>
-        </div>
-        <ToastContainer />
-      </form>
+        </nav>
+      </div>
     </div>
   );
 }

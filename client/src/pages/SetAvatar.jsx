@@ -1,8 +1,15 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
+import { Form, Input, Button, message, Upload } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import { updateAvatar, updateUser } from '../slices/userSlice';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faFileUpload,
+  faUpload,
+  faUser,
+} from '@fortawesome/free-solid-svg-icons';
+import { updateUser } from '../slices/userSlice';
 import toastOptions from '../utils/toastOptions';
 import { setAvatarRoute } from '../utils/APIRoutes';
 
@@ -14,7 +21,6 @@ export default function SetAvatar() {
   const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
     if (!selectedFile) {
       return;
     }
@@ -36,7 +42,7 @@ export default function SetAvatar() {
   };
 
   const handleChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.file.originFileObj;
     if (file.size > 4 * 1024 * 1024) {
       toast.error('File size should be smaller than 4 MB', toastOptions);
       e.target.value = '';
@@ -47,43 +53,55 @@ export default function SetAvatar() {
     }
   };
   return (
-    <div className="set-avatar w-full h-full flex flex-col  justify-center align-middle my-32 ">
-      <div className="image-container w-full flex justify-center">
+    <div className="header w-9/12 flex flex-col h-5/6 drop-shadow-sm my-4 shadow-md shadow-gray-300 mx-auto px-2 justify-center  gap-10">
+      <div className="imageContainer flex justify-center">
         <img
           src={currentAvatar || fallbackImage}
           onError={(e) => {
             e.target.onError = null;
             e.target.src = fallbackImage;
           }}
-          className="h-20 w-20 rounded-full mx-5 bg-orange-300"
+          className="h-36 w-36 rounded-full mx-5 bg-gray-300"
           alt="user-avatar"
         />
       </div>
-      <form
-        onSubmit={(e) => handleSubmit(e)}
-        className=" flex flex-col justify-center align-middle w-full my-4"
-      >
-        <div className="input-container w-full flex justify-center">
-          <input
-            name="avatar"
-            type="file"
-            placeholder="Avatar"
-            id="avatar"
-            required
+
+      <Form className="w-1/6 mx-auto" layout="vertical" onFinish={handleSubmit}>
+        <Form.Item
+          name="dragger"
+          valuePropName="fileList"
+          getValueFromEvent={() => {}}
+          noStyle
+        >
+          <Upload.Dragger
+            name="files"
+            action="/upload.do"
+            showUploadList={false}
             accept="image/png, image/jpeg"
             onChange={handleChange}
-          />
-        </div>
-        <div className="buttons  w-full flex justify-center text-white">
-          <button
-            type="submit"
-            className="rounded-sm bg-blue-400 p-2 m-2 disabled:opacity-75 "
           >
-            Submit
-          </button>
-        </div>
-      </form>
-      )
+            <p className="ant-upload-drag-icon text-3xl">
+              <FontAwesomeIcon icon={faUpload} />
+            </p>
+            <p className="ant-upload-text">
+              Click or drag file to this area to upload
+            </p>
+          </Upload.Dragger>
+        </Form.Item>
+
+        <Form.Item>
+          <Button
+            type="primary"
+            className="bg-blue-300 text-white my-4"
+            // styles={{ color: 'white' }}
+            block
+            size="large"
+            htmlType="submit"
+          >
+            Upload!
+          </Button>
+        </Form.Item>
+      </Form>
     </div>
   );
 }

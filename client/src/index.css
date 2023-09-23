@@ -1,6 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+* {
+  /* outline: dotted 1px; */
+}
 body {
   background: rgba(0, 0, 0, 0.01);
 }
@@ -34,8 +37,7 @@ header > image {
   border-bottom: solid 1px #efa985;
 }
 .chat-container {
-  height: 90%;
-  margin-top: 2rem;
+  height: 85%;
   margin-bottom: 5rem;
 }
 .msg-input:focus {

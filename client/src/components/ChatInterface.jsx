@@ -38,7 +38,7 @@ export default function ChatInterface({ sendMessage, selectedContact }) {
   };
   return (
     <>
-      <div className="chat-container my-0 flex flex-col h-full">
+      <div className="h-full my-8 flex flex-col ">
         <div
           className="message-container basis-5/6 overflow-auto"
           ref={messageContainerRef}
@@ -53,9 +53,9 @@ export default function ChatInterface({ sendMessage, selectedContact }) {
             ))}
         </div>
         {!!selectedContact && (
-          <div className="input-container relative w-full basis-1/6 pt-4">
+          <div className="input-container relative w-full basis-1 ">
             {displayEmojiPicker && (
-              <div className="absolute bottom-28 left-4">
+              <div className="absolute bottom-20 right-4">
                 <EmojiPicker onEmojiClick={handleEmojiClick} />
               </div>
             )}
@@ -63,24 +63,25 @@ export default function ChatInterface({ sendMessage, selectedContact }) {
               onSubmit={(e) => handleSendMessage(e)}
               className="mx-4 flex justify-between"
             >
-              <button type="button" className="">
-                <FontAwesomeIcon
-                  icon={faFaceSmileBeam}
-                  onClick={handleDisplayEmojiPicker}
-                  className="h-10 w-10 text-orange-400"
-                />
-              </button>
               <input
                 type="text"
                 placeholder="Type your message..."
+                required
                 onChange={(e) => setMsg(e.target.value)}
                 value={msg}
                 className="text-black h-16 w-5/6 rounded-lg p-4 msg-input border border-1"
               />
+              <button type="button" className="">
+                <FontAwesomeIcon
+                  icon={faFaceSmileBeam}
+                  onClick={handleDisplayEmojiPicker}
+                  className="h-10 w-10 text-orange-600"
+                />
+              </button>
               <button type="submit" className="">
                 <FontAwesomeIcon
                   icon={faPaperPlane}
-                  className="h-10 w-10 text-blue-400"
+                  className="h-10 w-10 text-orange-600"
                 />
               </button>
             </form>

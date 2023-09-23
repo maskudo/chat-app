@@ -131,36 +131,34 @@ export default function Chat() {
   };
 
   return (
-    <div className="h-screen chat-app overflow-hidden">
-      <div className="w-screen h-full   flex justify-center items-center mt-0">
-        <div className="chat-container w-9/12 flex ">
-          <div className="basis-2/6 rounded-lg overflow-auto mr-8 shadow-md shadow-gray-300">
-            {contacts &&
-              contacts.map((contact) => (
-                <Contact
-                  key={contact.username}
-                  contact={contact}
-                  onClick={() => {
-                    handleContactClick(contact._id);
-                  }}
-                />
-              ))}
-          </div>
-          <div className="chat-main basis-4/6  rounded-lg shadow-md shadow-gray-300  ">
-            {selectedContact ? (
-              <ChatInterface
-                sendMessage={sendMessage}
-                currentUser={currentUserId}
-                selectedContact={selectedContact}
+    <div className="w-screen h-full flex justify-center items-center mt-0">
+      <div className="chat-container w-9/12 flex ">
+        <div className="basis-2/6 rounded-lg overflow-auto mr-8 shadow-md shadow-gray-300">
+          {contacts &&
+            contacts.map((contact) => (
+              <Contact
+                key={contact.username}
+                contact={contact}
+                onClick={() => {
+                  handleContactClick(contact._id);
+                }}
               />
-            ) : (
-              <div className="text-2xl text-center flex flex-col justify-center h-full">
-                <div className="my-64 border-2 border-orange-300 rounded-lg mx-32 p-2">
-                  Select a contact to start chatting.
-                </div>
+            ))}
+        </div>
+        <div className="chat-main basis-4/6  rounded-lg shadow-md shadow-gray-300  ">
+          {selectedContact ? (
+            <ChatInterface
+              sendMessage={sendMessage}
+              currentUser={currentUserId}
+              selectedContact={selectedContact}
+            />
+          ) : (
+            <div className="text-2xl text-center flex flex-col justify-center h-full">
+              <div className="my-64 border-2 border-orange-300 rounded-lg mx-32 p-2">
+                Select a contact to start chatting.
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

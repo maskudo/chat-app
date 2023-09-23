@@ -11,11 +11,11 @@ export function Header() {
     dispatch(logoutUser());
   };
   return (
-    <header className="w-full ">
+    <header className="w-full">
       <div className="header w-9/12 flex  justify-between drop-shadow-sm py-2 shadow-md shadow-gray-300 mx-auto px-2">
         <Link to="/" className="logo flex justify-center align-middle ">
           <img
-            src="../../assets/images/logo.png"
+            src="../../assets/images/logo2.png"
             alt="company-logo"
             className="h-16 w-auto"
           />
@@ -25,10 +25,14 @@ export function Header() {
             <img
               src={currentUser?.avatarImage}
               alt="Current User Avatar"
-              className="h-10 w-10 rounded-full  bg-orange-300 "
+              className="h-10 w-10 rounded-full bg-gray-300"
             />
           </Link>
-          <button onClick={handleSignOut} type="button" className="text-xl">
+          <button
+            onClick={handleSignOut}
+            type="button"
+            className="text-xl text-red-400"
+          >
             <FontAwesomeIcon icon={faRightFromBracket} />
           </button>
         </div>

@@ -20,7 +20,7 @@ export default function Message({ message }) {
             selectedContact &&
             selectedContactOnlineStatus &&
             'border border-green-500'
-          } h-8 w-8 rounded-full mr-3`}
+          } h-8 w-8 rounded-full mr-3 bg-gray-300`}
         />
       )}
       <div
@@ -34,7 +34,7 @@ export default function Message({ message }) {
         <img
           src={message.sender.avatarImage}
           alt="Current User Avatar"
-          className="h-8 w-8 rounded-full ml-3"
+          className="h-8 w-8 rounded-full ml-3 bg-gray-300"
         />
       )}
     </div>

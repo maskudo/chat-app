@@ -36,7 +36,7 @@ export default function ChatInterface({ sendMessage, selectedContact }) {
     setDisplayEmojiPicker(!displayEmojiPicker);
   };
   return (
-    <>
+    <div className="h-full">
       <div className="chat-container my-0 flex flex-col h-full">
         <div
           className="message-container basis-5/6 overflow-auto"
@@ -93,6 +93,6 @@ export default function ChatInterface({ sendMessage, selectedContact }) {
         )}
       </div>
       <ToastContainer />
-    </>
+    </div>
   );
 }

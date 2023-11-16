@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { io } from 'socket.io-client';
 import ChatInterface from '../components/ChatInterface';
@@ -24,26 +23,21 @@ export default function Chat() {
   const currentUserId = useSelector((state) => state.user?.user?._id);
   const selectedContact = useSelector((state) => state.user?.selectedContact);
   const socket = useRef();
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
     async function fn() {
-      if (!currentUserId) {
-        navigate('/login');
-      } else {
-        let data = [];
-        try {
-          data = await axios.get(`${allUsersRoute}/${currentUserId}`);
-        } catch (error) {
-          const errorMsg = error.message;
-          toast.error(errorMsg, {
-            ...toastOptions,
-            toastId: errorMsg,
-          });
-        }
-        setContacts(data.data);
+      let data = [];
+      try {
+        data = await axios.get(`${allUsersRoute}/${currentUserId}`);
+      } catch (error) {
+        const errorMsg = error.message;
+        toast.error(errorMsg, {
+          ...toastOptions,
+          toastId: errorMsg,
+        });
       }
+      setContacts(data.data);
     }
     fn();
   }, []);
@@ -52,26 +46,21 @@ export default function Chat() {
     if (currentUserId) {
       socket.current = io(host);
       socket.current.emit('add-user', currentUserId);
-    } else {
-      navigate('/login');
+      return;
     }
   }, [currentUserId]);
 
   useEffect(() => {
     async function getMessages() {
-      if (!currentUserId) {
-        navigate('/login');
-      } else {
-        let data = await dispatch(
-          getAllMessages({ currentUserId, selectedContact })
-        );
-        if (!data.payload) {
-          const errorMsg = data.error.message;
-          toast.error(errorMsg, { ...toastOptions, toastId: errorMsg });
-          return;
-        }
-        data = data.payload;
+      let data = await dispatch(
+        getAllMessages({ currentUserId, selectedContact })
+      );
+      if (!data.payload) {
+        const errorMsg = data.error.message;
+        toast.error(errorMsg, { ...toastOptions, toastId: errorMsg });
+        return;
       }
+      data = data.payload;
     }
 
     if (selectedContact) {
@@ -131,37 +120,38 @@ export default function Chat() {
   };
 
   return (
-    <div className="h-screen chat-app overflow-hidden">
-      <div className="w-screen h-full  text-white flex justify-center items-center mt-0">
-        <div className="chat-container w-9/12 flex ">
-          <div className="contacts basis-2/6 rounded-lg overflow-auto mr-8">
-            {contacts &&
-              contacts.map((contact) => (
-                <Contact
-                  key={contact.username}
-                  contact={contact}
-                  onClick={() => {
-                    handleContactClick(contact._id);
-                  }}
-                />
-              ))}
+    <div className="h-full min-h-[80vh] chat-app grow flex justify-center w-[80%] mx-auto my-2 text-white">
+      <div className="contacts basis-2/6 rounded-lg overflow-auto mr-8">
+        {!!contacts?.length &&
+          contacts.map((contact) => (
+            <Contact
+              key={contact.username}
+              contact={contact}
+              onClick={() => {
+                handleContactClick(contact._id);
+              }}
+            />
+          ))}
+        {!contacts?.length && (
+          <div className="text-white h-full flex items-center justify-center text-2xl text-center">
+            No contacts to chat with :(
           </div>
-          <div className="chat-main basis-4/6  rounded-lg">
-            {selectedContact ? (
-              <ChatInterface
-                sendMessage={sendMessage}
-                currentUser={currentUserId}
-                selectedContact={selectedContact}
-              />
-            ) : (
-              <div className="text-2xl text-center flex flex-col justify-center h-full">
-                <div className="my-64 border-2 border-orange-300 rounded-lg mx-32 p-2">
-                  Select a contact to start chatting.
-                </div>
-              </div>
-            )}
+        )}
+      </div>
+      <div className="chat-main basis-4/6  rounded-lg">
+        {selectedContact ? (
+          <ChatInterface
+            sendMessage={sendMessage}
+            currentUser={currentUserId}
+            selectedContact={selectedContact}
+          />
+        ) : (
+          <div className="text-2xl text-center flex flex-col justify-center h-full">
+            <div className="my-64 border-2 border-orange-300 rounded-lg mx-32 p-2">
+              Select a contact to start chatting.
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

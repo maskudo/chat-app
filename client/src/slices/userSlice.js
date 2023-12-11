@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { loginRoute, registerRoute, setAvatarRoute } from '../utils/APIRoutes';
+import { loginRoute, registerRoute } from '../utils/APIRoutes';
 
 const userFromLocalStorage = await JSON.parse(
   localStorage.getItem('chat-app-user')
@@ -27,6 +27,7 @@ export const registerUser = createAsyncThunk(
         },
       }
     );
+    console.log({ response });
     const { data } = response;
     localStorage.setItem('chat-app-user', JSON.stringify(data.user));
     localStorage.setItem('token', data.token);

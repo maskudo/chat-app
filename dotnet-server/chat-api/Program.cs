@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ChatApi.Models;
+using ChatApi.Middleware;
+using ChatApi.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,12 @@ builder.Services.AddDbContext<UserContext>(opt => opt.UseInMemoryDatabase("Users
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// dependency injection
+{
+    builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+    builder.Services.AddScoped<IJwtHelper, JwtHelper>();
+}
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -23,6 +31,7 @@ if (app.Environment.IsDevelopment())
 
 /* app.UseHttpsRedirection(); */
 app.UseCors(options => options.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+app.UseMiddleware<JwtMiddleware>();
 
 app.UseAuthorization();
 

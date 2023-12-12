@@ -1,4 +1,3 @@
-using BCrypt.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ChatApi.Models;
@@ -40,7 +39,7 @@ namespace chat_api.Controllers
         // PUT: api/User/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(Guid id, User user)
+        private async Task<IActionResult> PutUser(Guid id, User user)
         {
             if (id != user.id)
             {
@@ -98,14 +97,6 @@ namespace chat_api.Controllers
         private bool UserExists(Guid id)
         {
             return _context.Users.Any(e => e.id == id);
-        }
-
-        [HttpPost("register")]
-        public async Task<ActionResult<User> > Register(RegisterRequest user){
-          var id = Guid.NewGuid();
-          var password_hash =  BCrypt.Net.BCrypt.HashPassword(user.password);
-          var newUser = new User(id, user.username, password_hash, user.avatarImage);
-            return await PostUser(newUser);
         }
     }
 }

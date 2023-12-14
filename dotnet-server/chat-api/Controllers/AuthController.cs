@@ -1,8 +1,10 @@
+using ChatApi.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ChatApi.Models;
 
 namespace chat_api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -20,6 +22,7 @@ namespace chat_api.Controllers
             return _context.Users.Any(e => e.username == username);
         }
 
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<ActionResult> Register(RegisterRequest user)
         {
@@ -36,6 +39,7 @@ namespace chat_api.Controllers
             return Ok("User registered successfully");
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
         public ActionResult<User> Login(LoginRequest user)
         {

@@ -1,4 +1,4 @@
-namespace ChatApi.Middleware;
+namespace ChatApi.Authorization;
 
 public class JwtMiddleware
 {
@@ -11,11 +11,11 @@ public class JwtMiddleware
 
     public async Task Invoke(HttpContext context)
     {
-        if (!context.Request.Headers.ContainsKey("Authorization"))
+        if (context.Request.Headers.ContainsKey("Authorization"))
         {
-            context.Response.StatusCode = 401;
-            await context.Response.WriteAsync("No Authorization header found.");
-            return;
+          // some validation 
+          Console.WriteLine("has Authorization header");
+          context.Items["user"] = "user";
         }
         await _next(context);
     }

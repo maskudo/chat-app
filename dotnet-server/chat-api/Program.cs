@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ChatApi.Models;
-using ChatApi.Middleware;
+using ChatApi.Authorization;
 using ChatApi.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);

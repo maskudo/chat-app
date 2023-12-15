@@ -9,7 +9,7 @@ import Message from './Message';
 export default function ChatInterface({ sendMessage, selectedContact }) {
   const messageContainerRef = useRef(null);
   const [msg, setMsg] = useState('');
-  const currentUser = useSelector((state) => state.user?.user?._id);
+  const currentUser = useSelector((state) => state.user?.user?.id);
   const messages = useSelector((state) => state.message.messages);
   const [displayEmojiPicker, setDisplayEmojiPicker] = useState(false);
 
@@ -45,7 +45,7 @@ export default function ChatInterface({ sendMessage, selectedContact }) {
           {messages &&
             messages.map((message) => (
               <Message
-                key={message._id}
+                key={message?.id}
                 message={message}
                 currentUser={currentUser}
               />

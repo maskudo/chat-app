@@ -13,7 +13,7 @@ export default function Login() {
   });
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user?.user?._id);
+  const user = useSelector((state) => state.user?.user?.id);
 
   const handleValidation = () => {
     const { password, username } = values;
@@ -33,9 +33,13 @@ export default function Login() {
     if (handleValidation()) {
       const { password, username } = values;
       let data = await dispatch(loginUser({ username, password }));
-      data = data.payload;
-      if (data.status === false) {
-        toast.error(data.msg, toastOptions);
+      data = data?.payload;
+      if (!data?.status) {
+        toast.error(
+          data?.msg ||
+            'Error logging in. Check your username and passord and internet connection.',
+          toastOptions
+        );
       } else {
         await dispatch(updateUser(data.user));
         navigate('/');

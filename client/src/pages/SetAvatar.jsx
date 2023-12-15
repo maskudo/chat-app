@@ -27,7 +27,7 @@ export default function SetAvatar() {
       },
     };
     const res = await axios.patch(
-      `${setAvatarRoute}/${user?._id}/setavatar`,
+      `${setAvatarRoute}/${user?.id}/setavatar`,
       formData,
       config
     );

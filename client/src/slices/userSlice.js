@@ -27,7 +27,6 @@ export const registerUser = createAsyncThunk(
         },
       }
     );
-    console.log({ response });
     const { data } = response;
     localStorage.setItem('chat-app-user', JSON.stringify(data.user));
     localStorage.setItem('token', data.token);
@@ -87,7 +86,9 @@ const userSlice = createSlice({
     },
     updateUser: (state, action) => {
       state.user = action.payload;
-      localStorage.setItem('chat-app-user', JSON.stringify(action.payload));
+      if (action.payload) {
+        localStorage.setItem('chat-app-user', JSON.stringify(action.payload));
+      }
     },
     setSelectedContact: (state, action) => {
       state.selectedContact = action.payload;

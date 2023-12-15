@@ -1,8 +1,7 @@
 import axios from 'axios';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { io } from 'socket.io-client';
 import ChatInterface from '../components/ChatInterface';
 import Contact from '../components/Contact';
 import {
@@ -10,26 +9,27 @@ import {
   getAllMessages,
   sendNewMessage,
 } from '../slices/messageSlice';
-import {
-  setSelectedContact,
-  setSelectedContactOnlineStatus,
-} from '../slices/userSlice';
-import { allUsersRoute, host } from '../utils/APIRoutes';
+import { setSelectedContact } from '../slices/userSlice';
+import { allUsersRoute } from '../utils/APIRoutes';
 import toastOptions from '../utils/toastOptions';
 
 export default function Chat() {
   const [contacts, setContacts] = useState(undefined);
-  const [arrivalMsg, setArrivalMsg] = useState(undefined);
-  const currentUserId = useSelector((state) => state.user?.user?._id);
+  const currentUserId = useSelector((state) => state.user?.user?.id);
   const selectedContact = useSelector((state) => state.user?.selectedContact);
-  const socket = useRef();
   const dispatch = useDispatch();
 
   useEffect(() => {
     async function fn() {
       let data = [];
       try {
-        data = await axios.get(`${allUsersRoute}/${currentUserId}`);
+        const token = localStorage.getItem('token');
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+        data = await axios.get(`${allUsersRoute}`, config);
       } catch (error) {
         const errorMsg = error.message;
         toast.error(errorMsg, {
@@ -37,18 +37,11 @@ export default function Chat() {
           toastId: errorMsg,
         });
       }
-      setContacts(data.data);
+      let contacts = data.data.filter((usr) => usr.id !== currentUserId);
+      setContacts(contacts);
     }
     fn();
   }, []);
-
-  useEffect(() => {
-    if (currentUserId) {
-      socket.current = io(host);
-      socket.current.emit('add-user', currentUserId);
-      return;
-    }
-  }, [currentUserId]);
 
   useEffect(() => {
     async function getMessages() {
@@ -65,10 +58,6 @@ export default function Chat() {
 
     if (selectedContact) {
       getMessages();
-      socket.current.emit('req-contact-status', {
-        senderId: currentUserId,
-        contactId: selectedContact,
-      });
     }
   }, [selectedContact]);
 
@@ -89,31 +78,10 @@ export default function Chat() {
         return;
       }
       data = data.payload;
-      // console.log(data.data);
-      socket.current.emit('send-msg', data.data);
-      dispatch(addNewMessage(data.data));
+      dispatch(addNewMessage(data));
     },
     [currentUserId, selectedContact]
   );
-
-  useEffect(() => {
-    // console.log('checking socket.current', socket.current);
-    if (socket.current) {
-      socket.current.on('msg-receive', (msg) => {
-        dispatch(setSelectedContactOnlineStatus(true));
-        setArrivalMsg({ fromSelf: false, message: msg });
-      });
-      socket.current.on('contact-status', (msg) => {
-        dispatch(setSelectedContactOnlineStatus(msg.status));
-      });
-    }
-  }, [socket, selectedContact]);
-
-  useEffect(() => {
-    if (arrivalMsg) {
-      dispatch(addNewMessage(arrivalMsg.message));
-    }
-  }, [arrivalMsg]);
 
   const handleContactClick = (contact) => {
     dispatch(setSelectedContact(contact));
@@ -128,7 +96,7 @@ export default function Chat() {
               key={contact.username}
               contact={contact}
               onClick={() => {
-                handleContactClick(contact._id);
+                handleContactClick(contact.id);
               }}
             />
           ))}

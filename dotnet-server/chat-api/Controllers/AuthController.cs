@@ -49,7 +49,7 @@ namespace chat_api.Controllers
             var usr = _context.Users.SingleOrDefault(u => u.username == user.username);
             if (usr == null || !BCrypt.Net.BCrypt.Verify(user.password, usr.passwordHash))
             {
-                return BadRequest("Incorrect Username or Password");
+                throw new AppException("Incorrect username or password");
             }
             var token = _jwtHelper.GenerateToken(usr);
             LoginResponse response = new(usr, token);

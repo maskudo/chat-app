@@ -9,7 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors();
 builder.Services.AddControllers();
-builder.Services.AddDbContext<UserContext>(opt => opt.UseInMemoryDatabase("Users"));
+builder.Services
+  .AddDbContext<UserContext>(opt => opt.UseInMemoryDatabase("Users"))
+  .AddDbContext<MessageContext>(opt => opt.UseInMemoryDatabase("Messages"));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -32,6 +34,7 @@ if (app.Environment.IsDevelopment())
 
 /* app.UseHttpsRedirection(); */
 app.UseCors(options => options.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+app.UseMiddleware<ErrorHandlerMiddleare>();
 app.UseMiddleware<JwtMiddleware>();
 
 app.UseAuthorization();

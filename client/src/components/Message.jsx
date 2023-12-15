@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 export default function Message({ message }) {
-  const currentUser = useSelector((state) => state.user?.user?._id);
+  const currentUser = useSelector((state) => state.user?.user?.id);
   const selectedContact = useSelector((state) => state.user?.selectedContact);
   const selectedContactOnlineStatus = useSelector(
     (state) => state.user?.selectedContactOnlineStatus
   );
-  const isCurrentUser = currentUser === message.sender._id;
+  const isCurrentUser = currentUser === message.sender.id;
   return (
     <div
       className={`flex items-start m-4  ${isCurrentUser ? 'justify-end' : ''}`}

@@ -1,5 +1,5 @@
 namespace ChatApi.Helpers;
 public class AppSettings
 {
-    public string Secret { get; set; } = "mysecretkey";
+    public string Secret { get; set; } = string.Empty;
 }

@@ -1,6 +1,7 @@
 using ChatApi.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ChatApi.Models;
+using ChatApi.Helpers;
 
 namespace chat_api.Controllers
 {
@@ -10,10 +11,12 @@ namespace chat_api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserContext _context;
+        private readonly IJwtHelper _jwtHelper;
 
-        public AuthController(UserContext context)
+        public AuthController(UserContext context, IJwtHelper jwtHelper)
         {
             _context = context;
+            _jwtHelper = jwtHelper;
         }
 
 
@@ -41,15 +44,16 @@ namespace chat_api.Controllers
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public ActionResult<User> Login(LoginRequest user)
+        public IActionResult Login(LoginRequest user)
         {
             var usr = _context.Users.SingleOrDefault(u => u.username == user.username);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(user.password, usr?.passwordHash))
+            if (usr == null || !BCrypt.Net.BCrypt.Verify(user.password, usr.passwordHash))
             {
                 return BadRequest("Incorrect Username or Password");
             }
-
-            return Ok(usr);
+            var token = _jwtHelper.GenerateToken(usr);
+            LoginResponse response = new(usr, token);
+            return Ok(response);
         }
     }
 }

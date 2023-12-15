@@ -1,3 +1,4 @@
+using ChatApi.Helpers;
 namespace ChatApi.Authorization;
 
 public class JwtMiddleware
@@ -9,13 +10,16 @@ public class JwtMiddleware
         _next = next;
     }
 
-    public async Task Invoke(HttpContext context)
+    public async Task Invoke(HttpContext context, IJwtHelper jwtHelper)
     {
         if (context.Request.Headers.ContainsKey("Authorization"))
         {
-          // some validation 
-          Console.WriteLine("has Authorization header");
-          context.Items["user"] = "user";
+            var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+            var userId = jwtHelper.VerifyToken(token);
+            if (userId != null)
+            {
+                context.Items["user"] = userId;
+            }
         }
         await _next(context);
     }

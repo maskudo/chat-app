@@ -1,20 +1,20 @@
-import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 export default function Message({ message }) {
+  const user = useSelector((state) => state.user?.user);
   const currentUser = useSelector((state) => state.user?.user?.id);
   const selectedContact = useSelector((state) => state.user?.selectedContact);
   const selectedContactOnlineStatus = useSelector(
     (state) => state.user?.selectedContactOnlineStatus
   );
-  const isCurrentUser = currentUser === message.sender.id;
+  const isCurrentUser = currentUser === message.sender;
   return (
     <div
       className={`flex items-start m-4  ${isCurrentUser ? 'justify-end' : ''}`}
     >
       {!isCurrentUser && (
         <img
-          src={message.sender.avatarImage}
+          src={message.sender.avatarImage || user.avatarImage}
           alt="Contact Avatar"
           className={`${
             selectedContact &&
@@ -32,7 +32,7 @@ export default function Message({ message }) {
       </div>
       {isCurrentUser && (
         <img
-          src={message.sender.avatarImage}
+          src={message.sender.avatarImage || user.avatarImage}
           alt="Current User Avatar"
           className="h-8 w-8 rounded-full ml-3"
         />

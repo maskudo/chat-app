@@ -11,9 +11,9 @@ namespace chat_api.Controllers
     [ApiController]
     public class MessageController : ControllerBase
     {
-        private readonly MessageContext _context;
+        private readonly AppDbContext _context;
 
-        public MessageController(MessageContext context)
+        public MessageController(AppDbContext context)
         {
             _context = context;
         }
@@ -42,7 +42,7 @@ namespace chat_api.Controllers
         [HttpGet("{sender}/{receiver}")]
         public async Task<ActionResult<IEnumerable<Message>>> GetMessageBySenderReceiver(Guid sender, Guid receiver)
         {
-            var msg = await _context.Messages.Where(msg => msg.sender == sender && msg.receiver == receiver).ToListAsync();
+            var msg = await _context.Messages.Where(msg => (msg.sender == sender && msg.receiver == receiver) || (msg.sender == receiver && msg.receiver == sender)).ToListAsync();
             return msg;
         }
 

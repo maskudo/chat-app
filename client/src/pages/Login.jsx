@@ -34,10 +34,9 @@ export default function Login() {
       const { password, username } = values;
       let data = await dispatch(loginUser({ username, password }));
       data = data?.payload;
-      if (!data?.status) {
+      if (!data) {
         toast.error(
-          data?.msg ||
-            'Error logging in. Check your username and passord and internet connection.',
+          data?.msg || 'Error logging in. Check your username and passord',
           toastOptions
         );
       } else {

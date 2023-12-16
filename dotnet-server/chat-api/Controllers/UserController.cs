@@ -10,9 +10,9 @@ namespace chat_api.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly UserContext _context;
+        private readonly AppDbContext _context;
 
-        public UserController(UserContext context)
+        public UserController(AppDbContext context)
         {
             _context = context;
         }

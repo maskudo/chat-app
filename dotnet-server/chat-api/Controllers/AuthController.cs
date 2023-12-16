@@ -10,10 +10,10 @@ namespace chat_api.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly UserContext _context;
+        private readonly AppDbContext _context;
         private readonly IJwtHelper _jwtHelper;
 
-        public AuthController(UserContext context, IJwtHelper jwtHelper)
+        public AuthController(AppDbContext context, IJwtHelper jwtHelper)
         {
             _context = context;
             _jwtHelper = jwtHelper;

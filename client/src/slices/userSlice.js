@@ -28,8 +28,10 @@ export const registerUser = createAsyncThunk(
       }
     );
     const { data } = response;
-    localStorage.setItem('chat-app-user', JSON.stringify(data.user));
-    localStorage.setItem('token', data.token);
+    if (data.user && data.token) {
+      localStorage.setItem('chat-app-user', JSON.stringify(data.user));
+      localStorage.setItem('token', data.token);
+    }
     return data;
   }
 );
@@ -50,8 +52,10 @@ export const loginUser = createAsyncThunk(
       }
     );
     const { data } = response;
-    localStorage.setItem('chat-app-user', JSON.stringify(data.user));
-    localStorage.setItem('token', data.token);
+    if (data.user && data.token) {
+      localStorage.setItem('chat-app-user', JSON.stringify(data.user));
+      localStorage.setItem('token', data.token);
+    }
     return data;
   }
 );

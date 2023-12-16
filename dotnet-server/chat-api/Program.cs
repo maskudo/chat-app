@@ -9,9 +9,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors();
 builder.Services.AddControllers();
-builder.Services
-  .AddDbContext<UserContext>(opt => opt.UseInMemoryDatabase("Users"))
-  .AddDbContext<MessageContext>(opt => opt.UseInMemoryDatabase("Messages"));
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("Database"));
+});
+/* builder.Services */
+/*   .AddDbContext<UserContext>(opt => opt.UseInMemoryDatabase("Users")) */
+/*   .AddDbContext<MessageContext>(opt => opt.UseInMemoryDatabase("Messages")); */
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

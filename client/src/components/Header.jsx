@@ -3,12 +3,13 @@ import {
   faMessage,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { logoutUser } from '../slices/userSlice';
+import useUser from '../hooks/useUser';
 
 export default function Header() {
-  const currentUser = useSelector((state) => state.user?.user);
+  const { user: currentUser } = useUser();
   const dispatch = useDispatch();
   const handleSignOut = () => {
     dispatch(logoutUser());
@@ -26,7 +27,7 @@ export default function Header() {
             alt="Current User Avatar"
             className="h-10 w-10 rounded-full  bg-orange-300"
           />
-          <div>{currentUser.username}</div>
+          <div>{currentUser?.username}</div>
         </Link>
         <button onClick={handleSignOut} type="button" className="text-xl">
           <FontAwesomeIcon icon={faRightFromBracket} />

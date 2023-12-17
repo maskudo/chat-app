@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import { io } from 'socket.io-client';
 import ChatInterface from '../components/ChatInterface';
@@ -16,12 +16,15 @@ import {
 } from '../slices/userSlice';
 import { allUsersRoute, host } from '../utils/APIRoutes';
 import toastOptions from '../utils/toastOptions';
+import useUser from '../hooks/useUser';
+import useSelectedContact from '../hooks/useSelectedContact';
 
 export default function Chat() {
   const [contacts, setContacts] = useState(undefined);
   const [arrivalMsg, setArrivalMsg] = useState(undefined);
-  const currentUserId = useSelector((state) => state.user?.user?._id);
-  const selectedContact = useSelector((state) => state.user?.selectedContact);
+  const { user } = useUser();
+  const currentUserId = user?._id;
+  const { selectedContact } = useSelectedContact();
   const socket = useRef();
   const dispatch = useDispatch();
 
@@ -46,7 +49,6 @@ export default function Chat() {
     if (currentUserId) {
       socket.current = io(host);
       socket.current.emit('add-user', currentUserId);
-      return;
     }
   }, [currentUserId]);
 

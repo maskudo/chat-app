@@ -1,11 +1,8 @@
-import { useSelector } from 'react-redux';
+import useSelectedContact from '../hooks/useSelectedContact';
 
 function Contact({ contact, onClick }) {
-  const selected =
-    useSelector((state) => state.user?.selectedContact) === contact._id;
-  const selectedContactOnlineStatus = useSelector(
-    (state) => state.user?.selectedContactOnlineStatus
-  );
+  const { selectedContact, selectedContactOnlineStatus } = useSelectedContact();
+  const selected = selectedContact === contact._id;
 
   return (
     <div

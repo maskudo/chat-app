@@ -9,7 +9,6 @@ const initialState = {
   user: userFromLocalStorage,
   selectedContact: null,
   selectedContactOnlineStatus: false,
-  loading: false,
   error: null,
 };
 export const registerUser = createAsyncThunk(
@@ -97,29 +96,19 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(registerUser.pending, (state) => {
-        state.loading = true;
-      })
       .addCase(registerUser.fulfilled, (state, action) => {
-        state.loading = false;
         state.user = action.payload;
         state.error = null;
       })
       .addCase(registerUser.rejected, (state, action) => {
-        state.loading = false;
         state.user = null;
         state.error = action.error.message;
       })
-      .addCase(loginUser.pending, (state) => {
-        state.loading = true;
-      })
       .addCase(loginUser.fulfilled, (state, action) => {
-        state.loading = false;
         state.user = action.payload;
         state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
-        state.loading = false;
         state.user = null;
         state.error = action.error.message;
       });

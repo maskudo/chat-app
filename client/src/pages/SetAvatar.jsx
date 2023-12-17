@@ -1,15 +1,16 @@
-import { useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import { updateAvatar, updateUser } from '../slices/userSlice';
+import { updateUser } from '../slices/userSlice';
 import toastOptions from '../utils/toastOptions';
 import { setAvatarRoute } from '../utils/APIRoutes';
+import useUser from '../hooks/useUser';
 
 export default function SetAvatar() {
   const [currentAvatar, setCurrentAvatar] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
-  const user = useSelector((state) => state.user.user);
+  const { user } = useUser();
   const fallbackImage = user?.avatarImage;
   const dispatch = useDispatch();
 

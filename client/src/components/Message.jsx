@@ -1,12 +1,10 @@
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import useUser from '../hooks/useUser';
+import useSelectedContact from '../hooks/useSelectedContact';
 
 export default function Message({ message }) {
-  const currentUser = useSelector((state) => state.user?.user?._id);
-  const selectedContact = useSelector((state) => state.user?.selectedContact);
-  const selectedContactOnlineStatus = useSelector(
-    (state) => state.user?.selectedContactOnlineStatus
-  );
+  const { user } = useUser();
+  const currentUser = user?._id;
+  const { selectedContact, selectedContactOnlineStatus } = useSelectedContact();
   const isCurrentUser = currentUser === message.sender._id;
   return (
     <div

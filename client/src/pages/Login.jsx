@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { loginUser, updateUser } from '../slices/userSlice';
 import toastOptions from '../utils/toastOptions';
+import useUser from '../hooks/useUser';
 
 export default function Login() {
   const [values, setValues] = useState({
@@ -13,7 +14,7 @@ export default function Login() {
   });
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user?.user?._id);
+  const { user } = useUser();
 
   const handleValidation = () => {
     const { password, username } = values;

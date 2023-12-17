@@ -4,7 +4,6 @@ import { allMessagesRoute } from '../utils/APIRoutes';
 
 const initialState = {
   messages: null,
-  loading: false,
   newMessage: null,
   error: null,
 };
@@ -51,29 +50,19 @@ const messageSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getAllMessages.pending, (state) => {
-        state.loading = true;
-      })
       .addCase(getAllMessages.fulfilled, (state, action) => {
-        state.loading = false;
         state.messages = action.payload;
         state.error = null;
       })
       .addCase(getAllMessages.rejected, (state, action) => {
-        state.loading = false;
         state.messages = null;
         state.error = action.error.message;
       })
-      .addCase(sendNewMessage.pending, (state) => {
-        state.loading = true;
-      })
       .addCase(sendNewMessage.fulfilled, (state, action) => {
-        state.loading = false;
         state.newMessage = action.payload;
         state.error = null;
       })
       .addCase(sendNewMessage.rejected, (state, action) => {
-        state.loading = false;
         state.newMessage = null;
         state.error = action.error.message;
       });

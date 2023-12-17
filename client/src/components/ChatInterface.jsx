@@ -1,16 +1,18 @@
 import { faFaceSmile, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import EmojiPicker from 'emoji-picker-react';
 import Message from './Message';
+import useUser from '../hooks/useUser';
+import useMessages from '../hooks/useMessages';
 
 export default function ChatInterface({ sendMessage, selectedContact }) {
   const messageContainerRef = useRef(null);
   const [msg, setMsg] = useState('');
-  const currentUser = useSelector((state) => state.user?.user?._id);
-  const messages = useSelector((state) => state.message.messages);
+  const { user } = useUser();
+  const currentUser = user?._id;
+  const { messages } = useMessages();
   const [displayEmojiPicker, setDisplayEmojiPicker] = useState(false);
 
   useEffect(() => {
@@ -22,10 +24,9 @@ export default function ChatInterface({ sendMessage, selectedContact }) {
   const handleSendMessage = (e) => {
     e.preventDefault();
 
-    const inputValue = msg;
-    if (!inputValue) return;
+    if (!msg) return;
 
-    sendMessage(inputValue);
+    sendMessage(msg);
     setMsg('');
   };
   const handleEmojiClick = (emojiObject, event) => {
